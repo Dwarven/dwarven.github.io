@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dwarven</title>
+    <description>Hi, I am Dwarven Yang, an iOS developer.
+</description>
+    <link>https://dwarven.github.io/</link>
+    <atom:link href="https://dwarven.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 01 Jul 2019 18:30:40 +0800</pubDate>
+    <lastBuildDate>Mon, 01 Jul 2019 18:30:40 +0800</lastBuildDate>
+    <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>MARK: CocoaPods apps touched 1024</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://cocoapods.org/owners/5508&quot;&gt;https://cocoapods.org/owners/5508&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/MARK-CocoaPods-apps-touched-1024.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 29 Jan 2018 10:00:00 +0800</pubDate>
+        <link>https://dwarven.github.io/ios/2018/01/29/MARK-CocoaPods-apps-touched-1024.html</link>
+        <guid isPermaLink="true">https://dwarven.github.io/ios/2018/01/29/MARK-CocoaPods-apps-touched-1024.html</guid>
+        
+        
+        <category>iOS</category>
+        
+      </item>
+    
+      <item>
+        <title>MARK: CocoaPods apps touched 521</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://cocoapods.org/owners/5508&quot;&gt;https://cocoapods.org/owners/5508&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/MARK-CocoaPods-apps-touched-521.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 07 Jun 2017 10:00:00 +0800</pubDate>
+        <link>https://dwarven.github.io/ios/2017/06/07/MARK-CocoaPods-apps-touched-521.html</link>
+        <guid isPermaLink="true">https://dwarven.github.io/ios/2017/06/07/MARK-CocoaPods-apps-touched-521.html</guid>
+        
+        
+        <category>iOS</category>
+        
+      </item>
+    
+      <item>
+        <title>MARK: CocoaPods apps touched 300+</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://cocoapods.org/owners/5508&quot;&gt;https://cocoapods.org/owners/5508&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/MARK-CocoaPods-apps-touched-300+.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 07 Feb 2017 10:00:00 +0800</pubDate>
+        <link>https://dwarven.github.io/ios/2017/02/07/MARK-CocoaPods-apps-touched-300+.html</link>
+        <guid isPermaLink="true">https://dwarven.github.io/ios/2017/02/07/MARK-CocoaPods-apps-touched-300+.html</guid>
+        
+        
+        <category>iOS</category>
+        
+      </item>
+    
+      <item>
+        <title>MARK: CocoaPods apps touched 150</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://cocoapods.org/owners/5508&quot;&gt;https://cocoapods.org/owners/5508&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/MARK-CocoaPods-apps-touched-150.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 11 Aug 2016 12:01:10 +0800</pubDate>
+        <link>https://dwarven.github.io/ios/2016/08/11/MARK-CocoaPods-apps-touched-150.html</link>
+        <guid isPermaLink="true">https://dwarven.github.io/ios/2016/08/11/MARK-CocoaPods-apps-touched-150.html</guid>
+        
+        
+        <category>iOS</category>
+        
+      </item>
+    
+      <item>
+        <title>iOS10 APNs 新变化</title>
+        <description>&lt;h1 id=&quot;背景&quot;&gt;背景&lt;/h1&gt;
+
+&lt;h6 id=&quot;我的-iphone-6s-目前版本开发者预览版-beta-4&quot;&gt;我的 iPhone 6s 目前版本：开发者预览版 Beta 4&lt;/h6&gt;
+&lt;p&gt;最近上线了一个基于 &lt;a href=&quot;https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html&quot;&gt;APNs&lt;/a&gt; 的服务，这两天升级了&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;之后忽然发现不好使了，&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS9&lt;/code&gt;没问题，囧。&lt;/p&gt;
+
+&lt;h1 id=&quot;debug&quot;&gt;Debug&lt;/h1&gt;
+
+&lt;p&gt;经过经过一番调试之后发现，发送的内容没变，但在&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;上被过滤掉了，没有传给app。&lt;/p&gt;
+
+&lt;h6 id=&quot;这里推荐一个apns调试工具pushmebaby最早我是发现stefanhafeneger做了这个工具但是他的版本已经不能用了我在他的版本上做了一些优化需要的可以试试&quot;&gt;这里推荐一个APNs调试工具：&lt;a href=&quot;https://github.com/Dwarven/PushMeBaby&quot;&gt;PushMeBaby&lt;/a&gt;，最早我是发现&lt;code class=&quot;highlighter-rouge&quot;&gt;stefanhafeneger&lt;/code&gt;做了这个工具，但是他的版本已经不能用了，我在他的版本上做了一些优化，需要的可以试试。&lt;/h6&gt;
+
+&lt;p&gt;我们原来发送了一条用户不可见的&lt;code class=&quot;highlighter-rouge&quot;&gt;Remote Notification&lt;/code&gt;给app来做一些处理，结构如下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+	&quot;event&quot;:&quot;event_id&quot;,
+	&quot;message&quot;:
+	{
+		&quot;key1&quot;:&quot;value1&quot;,
+		&quot;key2&quot;:&quot;value2&quot;,
+		&quot;key3&quot;:&quot;value3&quot;,
+	},
+	...
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;就是这条数据，&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS9&lt;/code&gt;的app可以接收的到，&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;不行。我立即试了一下用户可见的&lt;code class=&quot;highlighter-rouge&quot;&gt;Remote Notification&lt;/code&gt;，发现&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;是可以接收的到的。内容如下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+	&quot;aps&quot;:
+	{
+		&quot;alert&quot;:&quot;This is some fancy message.&quot;
+	},
+	&quot;event&quot;:&quot;event_id&quot;,
+	&quot;message&quot;:
+	{
+		&quot;key1&quot;:&quot;value1&quot;,
+		&quot;key2&quot;:&quot;value2&quot;,
+		&quot;key3&quot;:&quot;value3&quot;,
+	},
+	...
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;于是我猜测是原来的消息体没有&lt;code class=&quot;highlighter-rouge&quot;&gt;aps&lt;/code&gt;这个key导致的，看了下&lt;a href=&quot;https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html&quot;&gt;官方文档&lt;/a&gt;发现了这么一句话：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;For each notification, compose a JSON dictionary object (as defined by &lt;a href=&quot;http://www.ietf.org/rfc/rfc4627.txt&quot;&gt;RFC 4627&lt;/a&gt;). This dictionary must contain another dictionary identified by the &lt;code class=&quot;highlighter-rouge&quot;&gt;aps&lt;/code&gt; key. The &lt;code class=&quot;highlighter-rouge&quot;&gt;aps&lt;/code&gt; dictionary can contain one or more properties that specify the following user notification types:&lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;p&gt;An alert message to display to the user&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;A number to badge the app icon with&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;A sound to play&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;p&gt;To support silent remote notifications, add the &lt;code class=&quot;highlighter-rouge&quot;&gt;remote-notification&lt;/code&gt; value to the &lt;code class=&quot;highlighter-rouge&quot;&gt;UIBackgroundModes&lt;/code&gt; array in your &lt;code class=&quot;highlighter-rouge&quot;&gt;Info.plist&lt;/code&gt; file. To learn more about this array, see &lt;a href=&quot;https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/iPhoneOSKeys.html#//apple_ref/doc/uid/TP40009252-SW22&quot;&gt;UIBackgroundModes&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;猜测&quot;&gt;猜测&lt;/h1&gt;
+&lt;p&gt;我的猜测有两种可能性导致的这种情况：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;也许这是&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;的一个bug&lt;/li&gt;
+  &lt;li&gt;也许苹果想在这一版进行&lt;code class=&quot;highlighter-rouge&quot;&gt;Remote Notification&lt;/code&gt;规范化，所以这有可能是&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;的一个feature&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;结论&quot;&gt;结论&lt;/h1&gt;
+&lt;p&gt;结论就是不管是不是需要显示在通知栏的&lt;code class=&quot;highlighter-rouge&quot;&gt;Remote Notification&lt;/code&gt;，&lt;code class=&quot;highlighter-rouge&quot;&gt;aps&lt;/code&gt;都不能为空，并且至少包含一对合法的key value。&lt;/p&gt;
+
+&lt;h1 id=&quot;处理方法&quot;&gt;处理方法&lt;/h1&gt;
+&lt;p&gt;不管怎样，目前来看还是要针对&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;做一些特殊处理的。由于我们需要发送信息给app处理，又不需要显示给用户看。所以选择&lt;code class=&quot;highlighter-rouge&quot;&gt;alert&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;badge&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;sound&lt;/code&gt;明显是不合适的。
+最后我们选择后台运行也可以唤醒app的key&lt;code class=&quot;highlighter-rouge&quot;&gt;content-available&lt;/code&gt;（具体&lt;code class=&quot;highlighter-rouge&quot;&gt;content-available&lt;/code&gt;怎么用请自行Google）。内容如下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+	&quot;aps&quot;:
+	{
+		&quot;content-available&quot;:&quot;1&quot;
+	},
+	&quot;event&quot;:&quot;event_id&quot;,
+	&quot;message&quot;:
+	{
+		&quot;key1&quot;:&quot;value1&quot;,
+		&quot;key2&quot;:&quot;value2&quot;,
+		&quot;key3&quot;:&quot;value3&quot;,
+	},
+	...
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;end&quot;&gt;&lt;em&gt;End~!&lt;/em&gt;&lt;/h3&gt;
+
+</description>
+        <pubDate>Wed, 03 Aug 2016 15:49:10 +0800</pubDate>
+        <link>https://dwarven.github.io/ios/2016/08/03/iOS10-APNs-%E6%96%B0%E5%8F%98%E5%8C%96.html</link>
+        <guid isPermaLink="true">https://dwarven.github.io/ios/2016/08/03/iOS10-APNs-%E6%96%B0%E5%8F%98%E5%8C%96.html</guid>
+        
+        
+        <category>iOS</category>
+        
+      </item>
+    
+  </channel>
+</rss>
