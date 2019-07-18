@@ -11,7 +11,7 @@
 
   <title>
     
-      MARK: CocoaPods apps touched 521 &middot; Dwarven
+      Xcode File Paths &middot; Dwarven
     
   </title>
 
@@ -42,19 +42,19 @@
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
 
   <!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>MARK: CocoaPods apps touched 521 | Dwarven</title>
+<title>Xcode File Paths | Dwarven</title>
 <meta name="generator" content="Jekyll v3.8.5" />
-<meta property="og:title" content="MARK: CocoaPods apps touched 521" />
+<meta property="og:title" content="Xcode File Paths" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="https://cocoapods.org/owners/5508" />
-<meta property="og:description" content="https://cocoapods.org/owners/5508" />
-<link rel="canonical" href="https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html" />
-<meta property="og:url" content="https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html" />
+<meta name="description" content="Provisioning Profiles Path" />
+<meta property="og:description" content="Provisioning Profiles Path" />
+<link rel="canonical" href="https://dwarven.github.io/ios/xcode/2017/07/28/Xcode-File-Paths.html" />
+<meta property="og:url" content="https://dwarven.github.io/ios/xcode/2017/07/28/Xcode-File-Paths.html" />
 <meta property="og:site_name" content="Dwarven" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2017-06-07T10:00:00+08:00" />
+<meta property="article:published_time" content="2017-07-28T10:00:00+08:00" />
 <script type="application/ld+json">
-{"description":"https://cocoapods.org/owners/5508","@type":"BlogPosting","url":"https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html","headline":"MARK: CocoaPods apps touched 521","dateModified":"2017-06-07T10:00:00+08:00","datePublished":"2017-06-07T10:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html"},"@context":"https://schema.org"}</script>
+{"description":"Provisioning Profiles Path","@type":"BlogPosting","url":"https://dwarven.github.io/ios/xcode/2017/07/28/Xcode-File-Paths.html","headline":"Xcode File Paths","dateModified":"2017-07-28T10:00:00+08:00","datePublished":"2017-07-28T10:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/ios/xcode/2017/07/28/Xcode-File-Paths.html"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -211,11 +211,11 @@
 
     <main class="container">
       <header>
-  <h1 class="post-title">MARK: CocoaPods apps touched 521</h1>
+  <h1 class="post-title">Xcode File Paths</h1>
 </header>
 <div class="content">
   <div class="post-meta">
-  <span class="post-date">07 Jun 2017</span>
+  <span class="post-date">28 Jul 2017</span>
   <span class="post-categories">
     
       &bull;
@@ -225,7 +225,17 @@
       
 
       
-        CocoaPods
+        iOS
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Xcode
       
     
   </span>
@@ -233,12 +243,93 @@
 
 
   <div class="post-body">
-    <p><a href="https://cocoapods.org/owners/5508">https://cocoapods.org/owners/5508</a></p>
+    <h4 id="provisioning-profiles-path">Provisioning Profiles Path</h4>
 
-<hr />
+<p><code class="highlighter-rouge">~/Library/MobileDevice/Provisioning Profiles</code></p>
 
-<p><img src="https://dwarven.github.io/assets/MARK-CocoaPods-apps-touched-521.png" alt="" /></p>
+<blockquote>
+  <p>真机调试用的描述文件路径</p>
+</blockquote>
 
+<h4 id="xcode-运行安装-app-产生的缓存文件-deriveddata">Xcode 运行安装 APP 产生的缓存文件 (DerivedData)</h4>
+
+<p><code class="highlighter-rouge">~/Library/Developer/Xcode/DerivedData</code></p>
+
+<blockquote>
+  <p>只要重新运行 Xcode 就一定会重新生成，而且会随着运行程序的增多，占用空间会越来越大。删除后在重新运行程序可能会稍微慢一点，建议定期清理。</p>
+</blockquote>
+
+<h4 id="app-打包的-ipa-历史版本-archives">APP 打包的 ipa 历史版本 (Archives)</h4>
+
+<p><code class="highlighter-rouge">~/Library/Developer/Xcode/Archives</code></p>
+
+<blockquote>
+  <p>删除后不可恢复，文件夹是按照日期排列的，所以如果你不想全部删除，就只保留最新的几个版本就好了，个人建议全部删除。</p>
+</blockquote>
+
+<h4 id="app-打包的app-icon历史版本-archives">APP 打包的app icon历史版本 (Archives)</h4>
+
+<p><code class="highlighter-rouge">~/Library/Developer/Xcode/Products</code></p>
+
+<blockquote>
+  <p>删除后不可恢复，文件夹是 Bundle Idenifier 排列的，然后再按照 archive 的版本号排列的，如果你看每个版本内的内容，其实就是你的 app icon，个人建议全部删除。</p>
+</blockquote>
+
+<h4 id="模拟器的缓存数据-devices">模拟器的缓存数据 (Devices)</h4>
+
+<p><code class="highlighter-rouge">~/Library/Developer/CoreSimulator/Devices</code></p>
+
+<blockquote>
+  <p>模拟器的相关数据。每个版本的模拟器占用的硬盘空间大约为 10M 左右。每个文件夹里包含的就是一个特定系统版本的设备的数据。每个文件夹对应哪个设备可以在其下 device.plist 中查看。删除之后，如果立即运行程序会报错，先关闭 Xcode，再重新打开程序，运行即可。运行该路径下会立马生成模拟器对应版本的文件。</p>
+</blockquote>
+
+<h4 id="对旧设备的支持-ios-devicesupport">对旧设备的支持 (iOS DeviceSupport)</h4>
+
+<p><code class="highlighter-rouge">~/Library/Developer/Xcode/iOS DeviceSupport</code></p>
+
+<blockquote>
+  <p>一般是占用硬盘空间最大的文件夹，即使全部删，再连接设备调试时，会重新自动生成。一般 iOS 只向下兼容两个版本就可以了，所以我移除了 9.0 以下的所有版本。</p>
+</blockquote>
+
+<h4 id="xcode-中的无效的插件-plug-ins">Xcode 中的无效的插件 (Plug-ins)</h4>
+
+<p><code class="highlighter-rouge">~/Library/Application Support/Developer/Shared/Xcode/Plug-ins</code></p>
+
+<blockquote>
+  <p>因为之前你可能安装了一些 Xcode 的插件，比如 HighlightSelectedString、VVDocumenter-Xcode 等非常方便好用的第三方插件，在 Xcode 升级到 version 8.0 以后，就失效了，Xcode 在内部已经集成了类似的方法，所以之前安装的也都没有用了，但是还在原来的位置占用着硬盘空间，建议删除。</p>
+</blockquote>
+
+<h4 id="旧版本的模拟器支持">旧版本的模拟器支持</h4>
+
+<p><code class="highlighter-rouge">~/Library/Developer/CoreSimulator/Profiles/Runtimes</code></p>
+
+<blockquote>
+  <p>如果你不小心安装了很多个版本的模拟器，那么你可以删除一些旧版本的。但是当你需要旧版本的模拟器时，就需要重新下载了。建议留下一到两个版本就好了，其余的都删了吧。</p>
+</blockquote>
+
+<h4 id="playground-的项目缓存-xcpgdevices">playground 的项目缓存 (XCPGDevices)</h4>
+
+<p><code class="highlighter-rouge">~/Library/Developer/XCPGDevices</code></p>
+
+<blockquote>
+  <p>删除后可重新生成，可以全部删除。再次运行程序会缓存。</p>
+</blockquote>
+
+<h4 id="旧的文档-docsets">旧的文档 (Docsets)</h4>
+
+<p><code class="highlighter-rouge">~/Library/Developer/Shared/Documentation/DocSets</code></p>
+
+<blockquote>
+  <p>删除后不可恢复，该目录下存储的为开发文档，一般有三个文件 com.apple.adc.documentation.iOS.docset(1.68GB)、com.apple.adc.documentation.OSX.docset(2.62GB) 和 com.apple.adc.documentation.Xcode.docset(256.4M)，如果你只做 iOS 开发，其实你可以把 OSX.docset 删除掉的，因为它占用了 2.62GB 的硬盘空间。</p>
+</blockquote>
+
+<h4 id="模拟器中的sdk版本-iphonesimulatorsdk">模拟器中的SDK版本 (iPhoneSimulator.sdk)</h4>
+
+<p><code class="highlighter-rouge">/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs</code></p>
+
+<blockquote>
+  <p>不可恢复，操作请慎重。我个人的此路径下的只有最新版本的 sdk，除非当你有多个版本的 sdk 再酌情删除。</p>
+</blockquote>
 
     
 
@@ -247,14 +338,25 @@
 <div class="post-tags">
   
     
-    <a href="/tags.html#cocoapods">
+    <a href="/tags.html#ios">
     
       <span class="icon">
         <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 0h24v24H0z" fill="none"/>
     <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
 </svg>
-      </span>&nbsp;<span class="tag-name">CocoaPods</span>
+      </span>&nbsp;<span class="tag-name">iOS</span>
+    </a>
+  
+    
+    <a href="/tags.html#xcode">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Xcode</span>
     </a>
   
 </div>
@@ -278,9 +380,9 @@
   *  https://disqus.com/admin/universalcode/#configuration-variables
   */
   var disqus_config = function () {
-    this.page.url = "https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html";
+    this.page.url = "https://dwarven.github.io/ios/xcode/2017/07/28/Xcode-File-Paths.html";
     this.page.identifier = "" ||
-                           "https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html";
+                           "https://dwarven.github.io/ios/xcode/2017/07/28/Xcode-File-Paths.html";
   }
   function loadDisqusComments() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');

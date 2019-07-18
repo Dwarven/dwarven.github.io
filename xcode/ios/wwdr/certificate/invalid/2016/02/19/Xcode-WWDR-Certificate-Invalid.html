@@ -11,7 +11,7 @@
 
   <title>
     
-      MARK: CocoaPods apps touched 521 &middot; Dwarven
+      苹果开发者证书都显示“此证书的签发者无效” &middot; Dwarven
     
   </title>
 
@@ -42,19 +42,19 @@
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
 
   <!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>MARK: CocoaPods apps touched 521 | Dwarven</title>
+<title>苹果开发者证书都显示“此证书的签发者无效” | Dwarven</title>
 <meta name="generator" content="Jekyll v3.8.5" />
-<meta property="og:title" content="MARK: CocoaPods apps touched 521" />
+<meta property="og:title" content="苹果开发者证书都显示“此证书的签发者无效”" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="https://cocoapods.org/owners/5508" />
-<meta property="og:description" content="https://cocoapods.org/owners/5508" />
-<link rel="canonical" href="https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html" />
-<meta property="og:url" content="https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html" />
+<meta name="description" content="遇到的问题" />
+<meta property="og:description" content="遇到的问题" />
+<link rel="canonical" href="https://dwarven.github.io/xcode/ios/wwdr/certificate/invalid/2016/02/19/Xcode-WWDR-Certificate-Invalid.html" />
+<meta property="og:url" content="https://dwarven.github.io/xcode/ios/wwdr/certificate/invalid/2016/02/19/Xcode-WWDR-Certificate-Invalid.html" />
 <meta property="og:site_name" content="Dwarven" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2017-06-07T10:00:00+08:00" />
+<meta property="article:published_time" content="2016-02-19T10:00:00+08:00" />
 <script type="application/ld+json">
-{"description":"https://cocoapods.org/owners/5508","@type":"BlogPosting","url":"https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html","headline":"MARK: CocoaPods apps touched 521","dateModified":"2017-06-07T10:00:00+08:00","datePublished":"2017-06-07T10:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html"},"@context":"https://schema.org"}</script>
+{"description":"遇到的问题","@type":"BlogPosting","url":"https://dwarven.github.io/xcode/ios/wwdr/certificate/invalid/2016/02/19/Xcode-WWDR-Certificate-Invalid.html","headline":"苹果开发者证书都显示“此证书的签发者无效”","dateModified":"2016-02-19T10:00:00+08:00","datePublished":"2016-02-19T10:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/xcode/ios/wwdr/certificate/invalid/2016/02/19/Xcode-WWDR-Certificate-Invalid.html"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -211,11 +211,11 @@
 
     <main class="container">
       <header>
-  <h1 class="post-title">MARK: CocoaPods apps touched 521</h1>
+  <h1 class="post-title">苹果开发者证书都显示“此证书的签发者无效”</h1>
 </header>
 <div class="content">
   <div class="post-meta">
-  <span class="post-date">07 Jun 2017</span>
+  <span class="post-date">19 Feb 2016</span>
   <span class="post-categories">
     
       &bull;
@@ -225,7 +225,47 @@
       
 
       
-        CocoaPods
+        Xcode
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        iOS
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        WWDR
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Certificate
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Invalid
       
     
   </span>
@@ -233,12 +273,41 @@
 
 
   <div class="post-body">
-    <p><a href="https://cocoapods.org/owners/5508">https://cocoapods.org/owners/5508</a></p>
+    <h4 id="遇到的问题">遇到的问题</h4>
 
-<hr />
+<blockquote>
+  <p>iOS开发证书都显示“此证书的签发者无效”，更新WWDR Certificate证书后还是显示无效</p>
+</blockquote>
 
-<p><img src="https://dwarven.github.io/assets/MARK-CocoaPods-apps-touched-521.png" alt="" /></p>
+<h4 id="原因分析">原因分析</h4>
 
+<blockquote>
+  <p>首先iOS开发证书显示“此证书的签发者无效”，是由于WWDR Certificate证书过期导致的，需要更新WWDR Certificate证书！</p>
+</blockquote>
+
+<h4 id="解决方案">解决方案</h4>
+
+<ul>
+  <li>下载最新版的证书 <a href="https://developer.apple.com/certificationauthority/AppleWWDRCA.cer">WWDR Certificate</a></li>
+  <li>
+    <p>双击打开安装</p>
+
+    <blockquote>
+      <p>安装后重新查看 iOS 开发证书，依然显示“此证书的签发者无效”，什么原因呢？因为还没有删除过期的 WWDR Certificate 证书</p>
+    </blockquote>
+  </li>
+  <li>删除过期 WWDR Certificate 证书</li>
+</ul>
+
+<p>打开钥匙串，显示过期证书（默认是隐藏），点击 显示-&gt;显示已过期的证书</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Xcode-WWDR-Certificate-Invalid/0.png" alt="" /></p>
+
+<p>在所有项目与系统中删除过期的WWDR Certificate证书</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Xcode-WWDR-Certificate-Invalid/1.png" alt="" /></p>
+
+<p>删完之后，再看原来的 iOS 开发证书，就变成有效的了～</p>
 
     
 
@@ -247,14 +316,58 @@
 <div class="post-tags">
   
     
-    <a href="/tags.html#cocoapods">
+    <a href="/tags.html#xcode">
     
       <span class="icon">
         <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 0h24v24H0z" fill="none"/>
     <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
 </svg>
-      </span>&nbsp;<span class="tag-name">CocoaPods</span>
+      </span>&nbsp;<span class="tag-name">Xcode</span>
+    </a>
+  
+    
+    <a href="/tags.html#ios">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">iOS</span>
+    </a>
+  
+    
+    <a href="/tags.html#wwdr">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">WWDR</span>
+    </a>
+  
+    
+    <a href="/tags.html#certificate">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Certificate</span>
+    </a>
+  
+    
+    <a href="/tags.html#invalid">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Invalid</span>
     </a>
   
 </div>
@@ -278,9 +391,9 @@
   *  https://disqus.com/admin/universalcode/#configuration-variables
   */
   var disqus_config = function () {
-    this.page.url = "https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html";
+    this.page.url = "https://dwarven.github.io/xcode/ios/wwdr/certificate/invalid/2016/02/19/Xcode-WWDR-Certificate-Invalid.html";
     this.page.identifier = "" ||
-                           "https://dwarven.github.io/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html";
+                           "https://dwarven.github.io/xcode/ios/wwdr/certificate/invalid/2016/02/19/Xcode-WWDR-Certificate-Invalid.html";
   }
   function loadDisqusComments() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');

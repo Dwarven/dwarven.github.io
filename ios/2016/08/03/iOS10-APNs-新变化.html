@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="zh-CN">
 
   <head>
   <link href="https://gmpg.org/xfn/11" rel="profile" />
@@ -246,34 +246,34 @@
 
 <p>我们原来发送了一条用户不可见的<code class="highlighter-rouge">Remote Notification</code>给app来做一些处理，结构如下：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
-	"event":"event_id",
-	"message":
-	{
-		"key1":"value1",
-		"key2":"value2",
-		"key3":"value3",
-	},
-	...
-}
-</code></pre></div></div>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+	</span><span class="s2">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
+	</span><span class="s2">"message"</span><span class="p">:</span><span class="w">
+	</span><span class="p">{</span><span class="w">
+		</span><span class="s2">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
+	</span><span class="p">},</span><span class="w">
+	</span><span class="err">...</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
 <p>就是这条数据，<code class="highlighter-rouge">iOS9</code>的app可以接收的到，<code class="highlighter-rouge">iOS10</code>不行。我立即试了一下用户可见的<code class="highlighter-rouge">Remote Notification</code>，发现<code class="highlighter-rouge">iOS10</code>是可以接收的到的。内容如下：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
-	"aps":
-	{
-		"alert":"This is some fancy message."
-	},
-	"event":"event_id",
-	"message":
-	{
-		"key1":"value1",
-		"key2":"value2",
-		"key3":"value3",
-	},
-	...
-}
-</code></pre></div></div>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+	</span><span class="s2">"aps"</span><span class="p">:</span><span class="w">
+	</span><span class="p">{</span><span class="w">
+		</span><span class="s2">"alert"</span><span class="p">:</span><span class="s2">"This is some fancy message."</span><span class="w">
+	</span><span class="p">},</span><span class="w">
+	</span><span class="s2">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
+	</span><span class="s2">"message"</span><span class="p">:</span><span class="w">
+	</span><span class="p">{</span><span class="w">
+		</span><span class="s2">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
+	</span><span class="p">},</span><span class="w">
+	</span><span class="err">...</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
 <p>于是我猜测是原来的消息体没有<code class="highlighter-rouge">aps</code>这个key导致的，看了下<a href="https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html">官方文档</a>发现了这么一句话：</p>
 
 <blockquote>
@@ -309,21 +309,21 @@
 <p>不管怎样，目前来看还是要针对<code class="highlighter-rouge">iOS10</code>做一些特殊处理的。由于我们需要发送信息给app处理，又不需要显示给用户看。所以选择<code class="highlighter-rouge">alert</code>、<code class="highlighter-rouge">badge</code>、<code class="highlighter-rouge">sound</code>明显是不合适的。
 最后我们选择后台运行也可以唤醒app的key<code class="highlighter-rouge">content-available</code>（具体<code class="highlighter-rouge">content-available</code>怎么用请自行Google）。内容如下：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
-	"aps":
-	{
-		"content-available":"1"
-	},
-	"event":"event_id",
-	"message":
-	{
-		"key1":"value1",
-		"key2":"value2",
-		"key3":"value3",
-	},
-	...
-}
-</code></pre></div></div>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+	</span><span class="s2">"aps"</span><span class="p">:</span><span class="w">
+	</span><span class="p">{</span><span class="w">
+		</span><span class="s2">"content-available"</span><span class="p">:</span><span class="s2">"1"</span><span class="w">
+	</span><span class="p">},</span><span class="w">
+	</span><span class="s2">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
+	</span><span class="s2">"message"</span><span class="p">:</span><span class="w">
+	</span><span class="p">{</span><span class="w">
+		</span><span class="s2">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
+	</span><span class="p">},</span><span class="w">
+	</span><span class="err">...</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
 
 <h3 id="end"><em>End~!</em></h3>
 
@@ -401,7 +401,7 @@
     
       <li>
         <h3>
-          <a href="/ios/certificate/2019/06/06/%E7%BB%86%E8%AF%B4-iOS-%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D.html">
+          <a href="/ios/certificate/code%20signing/2019/06/06/%E7%BB%86%E8%AF%B4-iOS-%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D.html">
             细说 iOS 代码签名
             <small>06 Jun 2019</small>
           </a>
