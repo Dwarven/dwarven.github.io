@@ -6,9 +6,175 @@
 </description>
     <link>https://dwarven.github.io/</link>
     <atom:link href="https://dwarven.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 15 Jul 2019 18:54:24 +0800</pubDate>
-    <lastBuildDate>Mon, 15 Jul 2019 18:54:24 +0800</lastBuildDate>
+    <pubDate>Thu, 18 Jul 2019 11:34:46 +0800</pubDate>
+    <lastBuildDate>Thu, 18 Jul 2019 11:34:46 +0800</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>iOS 企业发布</title>
+        <description>&lt;h3 id=&quot;ios企业发布一般有两种选择&quot;&gt;iOS企业发布一般有两种选择&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;第三方平台（例如：&lt;a href=&quot;https://www.pgyer.com/&quot;&gt;蒲公英&lt;/a&gt;、&lt;a href=&quot;https://fir.im/&quot;&gt;fir.im&lt;/a&gt;）
+    &lt;ul&gt;
+      &lt;li&gt;优点
+        &lt;ul&gt;
+          &lt;li&gt;简单易用：上传完 ipa 包基本上就能用了&lt;/li&gt;
+          &lt;li&gt;功能齐全：像下载量统计、版本控制、还有 Android iOS app 下载链接融合之类的功能一应俱全&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;缺点
+        &lt;ul&gt;
+          &lt;li&gt;必须跳转到第三方平台的网页才能下载&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;自建网站
+    &lt;ul&gt;
+      &lt;li&gt;优点
+        &lt;ul&gt;
+          &lt;li&gt;下载页面可定制&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;缺点
+        &lt;ul&gt;
+          &lt;li&gt;附加功能需开发&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;这篇文章主要是为记录下自建网站流程&quot;&gt;这篇文章主要是为记录下自建网站流程&lt;/h3&gt;
+
+&lt;h4 id=&quot;准备必须的文件&quot;&gt;准备必须的文件&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;57x57、512x512 分辨率的 icon 图片两张&lt;/li&gt;
+  &lt;li&gt;ipa 企业包&lt;/li&gt;
+  &lt;li&gt;符合 Apple 规则的 plist&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;将 icon 和 ipa 包上传到服务器生成可用下载链接，比如：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;https://www.example.com/apps/foo.ipa&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;https://www.example.com/image.57x57.png&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;https://www.example.com/image.512x512.png&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;生成 plist 文件，方式有两种：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;第一种方法：Xcode 导出 ipa 包的时候生成 plist&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/2/organizer_distribution_0.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/2/organizer_distribution_1.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/2/organizer_distribution_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;第二种方法：用上边生成的url 替换掉本文末的 plist 代码对应的 url&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;&amp;lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;plist&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;version=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;1.0&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;items&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;array&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+            &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;assets&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+            &lt;span class=&quot;nt&quot;&gt;&amp;lt;array&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;kind&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;software-package&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;url&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;https://www.example.com/apps/foo.ipa&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;kind&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;display-image&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;url&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;https://www.example.com/image.57x57.png&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;kind&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;full-size-image&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;url&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;https://www.example.com/image.512x512.png&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+            &lt;span class=&quot;nt&quot;&gt;&amp;lt;/array&amp;gt;&lt;/span&gt;
+            &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;metadata&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+            &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;bundle-identifier&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;com.organization.xxx&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;bundle-version&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;1.0&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;kind&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;software&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;title&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+                &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;App Name&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+            &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/array&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/plist&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;生成最终的下载链接&quot;&gt;生成最终的下载链接&lt;/h4&gt;
+
+&lt;p&gt;将上面的 plist 文件上传到服务器生成可用下载链接，比如：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;https://www.example.com/manifest.plist&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;将此链接加上前缀 &lt;code class=&quot;highlighter-rouge&quot;&gt;itms-services://?action=download-manifest&amp;amp;url=&lt;/code&gt; 即为最终的下载链接：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;itms-services://?action=download-manifest&amp;amp;url=https://www.example.com/manifest.plist&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;此时，用 Safari 打开最终生成的 url 即可进行下载验证。对于网页来说，将此 url 作为跳转链接使用即可。&lt;/p&gt;
+
+&lt;h3 id=&quot;end&quot;&gt;&lt;em&gt;End~!&lt;/em&gt;&lt;/h3&gt;
+</description>
+        <pubDate>Sun, 07 Jul 2019 10:00:00 +0800</pubDate>
+        <link>https://dwarven.github.io/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html</link>
+        <guid isPermaLink="true">https://dwarven.github.io/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html</guid>
+        
+        <category>iOS</category>
+        
+        <category>Enterprise</category>
+        
+        <category>Distribution</category>
+        
+        
+        <category>iOS</category>
+        
+        <category>Enterprise</category>
+        
+        <category>Distribution</category>
+        
+      </item>
     
       <item>
         <title>细说 iOS 代码签名</title>

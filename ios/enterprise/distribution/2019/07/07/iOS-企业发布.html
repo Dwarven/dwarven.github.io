@@ -11,7 +11,7 @@
 
   <title>
     
-      iOS10 APNs 新变化 &middot; Dwarven
+      iOS 企业发布 &middot; Dwarven
     
   </title>
 
@@ -42,19 +42,19 @@
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
 
   <!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>iOS10 APNs 新变化 | Dwarven</title>
+<title>iOS 企业发布 | Dwarven</title>
 <meta name="generator" content="Jekyll v3.8.5" />
-<meta property="og:title" content="iOS10 APNs 新变化" />
+<meta property="og:title" content="iOS 企业发布" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="背景" />
-<meta property="og:description" content="背景" />
-<link rel="canonical" href="https://dwarven.github.io/ios/2016/08/03/iOS10-APNs-%E6%96%B0%E5%8F%98%E5%8C%96.html" />
-<meta property="og:url" content="https://dwarven.github.io/ios/2016/08/03/iOS10-APNs-%E6%96%B0%E5%8F%98%E5%8C%96.html" />
+<meta name="description" content="iOS企业发布一般有两种选择" />
+<meta property="og:description" content="iOS企业发布一般有两种选择" />
+<link rel="canonical" href="https://dwarven.github.io/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html" />
+<meta property="og:url" content="https://dwarven.github.io/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html" />
 <meta property="og:site_name" content="Dwarven" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2016-08-03T15:49:10+08:00" />
+<meta property="article:published_time" content="2019-07-07T10:00:00+08:00" />
 <script type="application/ld+json">
-{"description":"背景","@type":"BlogPosting","url":"https://dwarven.github.io/ios/2016/08/03/iOS10-APNs-%E6%96%B0%E5%8F%98%E5%8C%96.html","headline":"iOS10 APNs 新变化","dateModified":"2016-08-03T15:49:10+08:00","datePublished":"2016-08-03T15:49:10+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/ios/2016/08/03/iOS10-APNs-%E6%96%B0%E5%8F%98%E5%8C%96.html"},"@context":"https://schema.org"}</script>
+{"description":"iOS企业发布一般有两种选择","@type":"BlogPosting","url":"https://dwarven.github.io/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html","headline":"iOS 企业发布","dateModified":"2019-07-07T10:00:00+08:00","datePublished":"2019-07-07T10:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -211,11 +211,11 @@
 
     <main class="container">
       <header>
-  <h1 class="post-title">iOS10 APNs 新变化</h1>
+  <h1 class="post-title">iOS 企业发布</h1>
 </header>
 <div class="content">
   <div class="post-meta">
-  <span class="post-date">03 Aug 2016</span>
+  <span class="post-date">07 Jul 2019</span>
   <span class="post-categories">
     
       &bull;
@@ -228,105 +228,175 @@
         iOS
       
     
+      &bull;
+
+      
+      
+      
+
+      
+        Enterprise
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Distribution
+      
+    
   </span>
 </div>
 
 
   <div class="post-body">
-    <h1 id="背景">背景</h1>
-
-<h6 id="我的-iphone-6s-目前版本开发者预览版-beta-4">我的 iPhone 6s 目前版本：开发者预览版 Beta 4</h6>
-<p>最近上线了一个基于 <a href="https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html">APNs</a> 的服务，这两天升级了<code class="highlighter-rouge">iOS10</code>之后忽然发现不好使了，<code class="highlighter-rouge">iOS9</code>没问题，囧。</p>
-
-<h1 id="debug">Debug</h1>
-
-<p>经过经过一番调试之后发现，发送的内容没变，但在<code class="highlighter-rouge">iOS10</code>上被过滤掉了，没有传给app。</p>
-
-<h6 id="这里推荐一个apns调试工具pushmebaby最早我是发现stefanhafeneger做了这个工具但是他的版本已经不能用了我在他的版本上做了一些优化需要的可以试试">这里推荐一个APNs调试工具：<a href="https://github.com/Dwarven/PushMeBaby">PushMeBaby</a>，最早我是发现<code class="highlighter-rouge">stefanhafeneger</code>做了这个工具，但是他的版本已经不能用了，我在他的版本上做了一些优化，需要的可以试试。</h6>
-
-<p>我们原来发送了一条用户不可见的<code class="highlighter-rouge">Remote Notification</code>给app来做一些处理，结构如下：</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
-	"event":"event_id",
-	"message":
-	{
-		"key1":"value1",
-		"key2":"value2",
-		"key3":"value3",
-	},
-	...
-}
-</code></pre></div></div>
-<p>就是这条数据，<code class="highlighter-rouge">iOS9</code>的app可以接收的到，<code class="highlighter-rouge">iOS10</code>不行。我立即试了一下用户可见的<code class="highlighter-rouge">Remote Notification</code>，发现<code class="highlighter-rouge">iOS10</code>是可以接收的到的。内容如下：</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
-	"aps":
-	{
-		"alert":"This is some fancy message."
-	},
-	"event":"event_id",
-	"message":
-	{
-		"key1":"value1",
-		"key2":"value2",
-		"key3":"value3",
-	},
-	...
-}
-</code></pre></div></div>
-<p>于是我猜测是原来的消息体没有<code class="highlighter-rouge">aps</code>这个key导致的，看了下<a href="https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html">官方文档</a>发现了这么一句话：</p>
-
-<blockquote>
-  <p>For each notification, compose a JSON dictionary object (as defined by <a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>). This dictionary must contain another dictionary identified by the <code class="highlighter-rouge">aps</code> key. The <code class="highlighter-rouge">aps</code> dictionary can contain one or more properties that specify the following user notification types:</p>
-
-  <ul>
-    <li>
-      <p>An alert message to display to the user</p>
-    </li>
-    <li>
-      <p>A number to badge the app icon with</p>
-    </li>
-    <li>
-      <p>A sound to play</p>
-    </li>
-  </ul>
-
-  <p>To support silent remote notifications, add the <code class="highlighter-rouge">remote-notification</code> value to the <code class="highlighter-rouge">UIBackgroundModes</code> array in your <code class="highlighter-rouge">Info.plist</code> file. To learn more about this array, see <a href="https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/iPhoneOSKeys.html#//apple_ref/doc/uid/TP40009252-SW22">UIBackgroundModes</a>.</p>
-</blockquote>
-
-<h1 id="猜测">猜测</h1>
-<p>我的猜测有两种可能性导致的这种情况：</p>
+    <h3 id="ios企业发布一般有两种选择">iOS企业发布一般有两种选择</h3>
 
 <ul>
-  <li>也许这是<code class="highlighter-rouge">iOS10</code>的一个bug</li>
-  <li>也许苹果想在这一版进行<code class="highlighter-rouge">Remote Notification</code>规范化，所以这有可能是<code class="highlighter-rouge">iOS10</code>的一个feature</li>
+  <li>第三方平台（例如：<a href="https://www.pgyer.com/">蒲公英</a>、<a href="https://fir.im/">fir.im</a>）
+    <ul>
+      <li>优点
+        <ul>
+          <li>简单易用：上传完 ipa 包基本上就能用了</li>
+          <li>功能齐全：像下载量统计、版本控制、还有 Android iOS app 下载链接融合之类的功能一应俱全</li>
+        </ul>
+      </li>
+      <li>缺点
+        <ul>
+          <li>必须跳转到第三方平台的网页才能下载</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>自建网站
+    <ul>
+      <li>优点
+        <ul>
+          <li>下载页面可定制</li>
+        </ul>
+      </li>
+      <li>缺点
+        <ul>
+          <li>附加功能需开发</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
 
-<h1 id="结论">结论</h1>
-<p>结论就是不管是不是需要显示在通知栏的<code class="highlighter-rouge">Remote Notification</code>，<code class="highlighter-rouge">aps</code>都不能为空，并且至少包含一对合法的key value。</p>
+<h3 id="这篇文章主要是为记录下自建网站流程">这篇文章主要是为记录下自建网站流程</h3>
 
-<h1 id="处理方法">处理方法</h1>
-<p>不管怎样，目前来看还是要针对<code class="highlighter-rouge">iOS10</code>做一些特殊处理的。由于我们需要发送信息给app处理，又不需要显示给用户看。所以选择<code class="highlighter-rouge">alert</code>、<code class="highlighter-rouge">badge</code>、<code class="highlighter-rouge">sound</code>明显是不合适的。
-最后我们选择后台运行也可以唤醒app的key<code class="highlighter-rouge">content-available</code>（具体<code class="highlighter-rouge">content-available</code>怎么用请自行Google）。内容如下：</p>
+<h4 id="准备必须的文件">准备必须的文件</h4>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
-	"aps":
-	{
-		"content-available":"1"
-	},
-	"event":"event_id",
-	"message":
-	{
-		"key1":"value1",
-		"key2":"value2",
-		"key3":"value3",
-	},
-	...
-}
+<ul>
+  <li>57x57、512x512 分辨率的 icon 图片两张</li>
+  <li>ipa 企业包</li>
+  <li>符合 Apple 规则的 plist</li>
+</ul>
+
+<p>将 icon 和 ipa 包上传到服务器生成可用下载链接，比如：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>https://www.example.com/apps/foo.ipa</td>
+    </tr>
+    <tr>
+      <td>https://www.example.com/image.57x57.png</td>
+    </tr>
+    <tr>
+      <td>https://www.example.com/image.512x512.png</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>生成 plist 文件，方式有两种：</p>
+
+<ul>
+  <li>第一种方法：Xcode 导出 ipa 包的时候生成 plist</li>
+</ul>
+
+<p><img src="https://dwarven.github.io/assets/posts/2/organizer_distribution_0.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/2/organizer_distribution_1.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/2/organizer_distribution_2.png" alt="" /></p>
+
+<ul>
+  <li>第二种方法：用上边生成的url 替换掉本文末的 plist 代码对应的 url</li>
+</ul>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">"1.0"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>items<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;array&gt;</span>
+        <span class="nt">&lt;dict&gt;</span>
+            <span class="nt">&lt;key&gt;</span>assets<span class="nt">&lt;/key&gt;</span>
+            <span class="nt">&lt;array&gt;</span>
+                <span class="nt">&lt;dict&gt;</span>
+                    <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
+                    <span class="nt">&lt;string&gt;</span>software-package<span class="nt">&lt;/string&gt;</span>
+                    <span class="nt">&lt;key&gt;</span>url<span class="nt">&lt;/key&gt;</span>
+                    <span class="nt">&lt;string&gt;</span>https://www.example.com/apps/foo.ipa<span class="nt">&lt;/string&gt;</span>
+                <span class="nt">&lt;/dict&gt;</span>
+                <span class="nt">&lt;dict&gt;</span>
+                    <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
+                    <span class="nt">&lt;string&gt;</span>display-image<span class="nt">&lt;/string&gt;</span>
+                    <span class="nt">&lt;key&gt;</span>url<span class="nt">&lt;/key&gt;</span>
+                    <span class="nt">&lt;string&gt;</span>https://www.example.com/image.57x57.png<span class="nt">&lt;/string&gt;</span>
+                <span class="nt">&lt;/dict&gt;</span>
+                <span class="nt">&lt;dict&gt;</span>
+                    <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
+                    <span class="nt">&lt;string&gt;</span>full-size-image<span class="nt">&lt;/string&gt;</span>
+                    <span class="nt">&lt;key&gt;</span>url<span class="nt">&lt;/key&gt;</span>
+                    <span class="nt">&lt;string&gt;</span>https://www.example.com/image.512x512.png<span class="nt">&lt;/string&gt;</span>
+                <span class="nt">&lt;/dict&gt;</span>
+            <span class="nt">&lt;/array&gt;</span>
+            <span class="nt">&lt;key&gt;</span>metadata<span class="nt">&lt;/key&gt;</span>
+            <span class="nt">&lt;dict&gt;</span>
+                <span class="nt">&lt;key&gt;</span>bundle-identifier<span class="nt">&lt;/key&gt;</span>
+                <span class="nt">&lt;string&gt;</span>com.organization.xxx<span class="nt">&lt;/string&gt;</span>
+                <span class="nt">&lt;key&gt;</span>bundle-version<span class="nt">&lt;/key&gt;</span>
+                <span class="nt">&lt;string&gt;</span>1.0<span class="nt">&lt;/string&gt;</span>
+                <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
+                <span class="nt">&lt;string&gt;</span>software<span class="nt">&lt;/string&gt;</span>
+                <span class="nt">&lt;key&gt;</span>title<span class="nt">&lt;/key&gt;</span>
+                <span class="nt">&lt;string&gt;</span>App Name<span class="nt">&lt;/string&gt;</span>
+            <span class="nt">&lt;/dict&gt;</span>
+        <span class="nt">&lt;/dict&gt;</span>
+    <span class="nt">&lt;/array&gt;</span>
+<span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span>
 </code></pre></div></div>
 
-<h3 id="end"><em>End~!</em></h3>
+<h4 id="生成最终的下载链接">生成最终的下载链接</h4>
 
+<p>将上面的 plist 文件上传到服务器生成可用下载链接，比如：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>https://www.example.com/manifest.plist</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>将此链接加上前缀 <code class="highlighter-rouge">itms-services://?action=download-manifest&amp;url=</code> 即为最终的下载链接：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>itms-services://?action=download-manifest&amp;url=https://www.example.com/manifest.plist</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>此时，用 Safari 打开最终生成的 url 即可进行下载验证。对于网页来说，将此 url 作为跳转链接使用即可。</p>
+
+<h3 id="end"><em>End~!</em></h3>
 
     
 
@@ -343,6 +413,28 @@
     <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
 </svg>
       </span>&nbsp;<span class="tag-name">iOS</span>
+    </a>
+  
+    
+    <a href="/tags.html#enterprise">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Enterprise</span>
+    </a>
+  
+    
+    <a href="/tags.html#distribution">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Distribution</span>
     </a>
   
 </div>
@@ -366,9 +458,9 @@
   *  https://disqus.com/admin/universalcode/#configuration-variables
   */
   var disqus_config = function () {
-    this.page.url = "https://dwarven.github.io/ios/2016/08/03/iOS10-APNs-%E6%96%B0%E5%8F%98%E5%8C%96.html";
+    this.page.url = "https://dwarven.github.io/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html";
     this.page.identifier = "" ||
-                           "https://dwarven.github.io/ios/2016/08/03/iOS10-APNs-%E6%96%B0%E5%8F%98%E5%8C%96.html";
+                           "https://dwarven.github.io/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html";
   }
   function loadDisqusComments() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');
@@ -392,15 +484,6 @@
     
       <li>
         <h3>
-          <a href="/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html">
-            iOS 企业发布
-            <small>07 Jul 2019</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
           <a href="/ios/certificate/2019/06/06/%E7%BB%86%E8%AF%B4-iOS-%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D.html">
             细说 iOS 代码签名
             <small>06 Jun 2019</small>
@@ -413,6 +496,15 @@
           <a href="/cocoapods/2018/01/29/MARK-CocoaPods-apps-touched-1024.html">
             MARK: CocoaPods apps touched 1024
             <small>29 Jan 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/cocoapods/2017/06/07/MARK-CocoaPods-apps-touched-521.html">
+            MARK: CocoaPods apps touched 521
+            <small>07 Jun 2017</small>
           </a>
         </h3>
       </li>
