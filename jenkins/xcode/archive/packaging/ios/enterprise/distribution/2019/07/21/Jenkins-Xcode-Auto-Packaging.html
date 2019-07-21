@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <link href="https://gmpg.org/xfn/11" rel="profile" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+  <title>
+    
+      利用 Jenkins 实现 Xcode 自动打包 &middot; Dwarven
+    
+  </title>
+
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-143869389-1', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface" />
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/avatar.gif" />
+<link rel="shortcut icon" href="/avatar.gif" />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>利用 Jenkins 实现 Xcode 自动打包 | Dwarven</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="利用 Jenkins 实现 Xcode 自动打包" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Jenkins 是什么?" />
+<meta property="og:description" content="Jenkins 是什么?" />
+<link rel="canonical" href="https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html" />
+<meta property="og:url" content="https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html" />
+<meta property="og:site_name" content="Dwarven" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-07-21T10:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"Jenkins 是什么?","@type":"BlogPosting","url":"https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html","headline":"利用 Jenkins 实现 Xcode 自动打包","dateModified":"2019-07-21T10:00:00+08:00","datePublished":"2019-07-21T10:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="post">
+
+    <div id="sidebar">
+  <header>
+    <div class="site-title">
+      <a href="/">
+        
+          <span class="back-arrow icon"><svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0h24v24H0z" fill="none"/>
+  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+</svg></span>
+        
+        Dwarven
+      </a>
+    </div>
+    <p class="lead">iOS Developer
+</p>
+  </header>
+  <nav id="sidebar-nav-links">
+  
+    <a class="home-link "
+        href="/">Home</a>
+  
+  
+
+  
+
+  
+
+
+  
+    
+  
+
+  
+    
+      <a class="page-link "
+          href="/about.html">About</a>
+    
+  
+
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+
+  
+
+
+  
+
+
+  
+    
+  
+
+  
+    
+  
+
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+
+  
+
+
+  <!-- Optional additional links to insert in sidebar nav -->
+</nav>
+
+
+  
+
+  <nav id="sidebar-icon-links">
+  
+    <a id="github-link"
+       class="icon" title="Github" aria-label="Github"
+       href="https://github.com/Dwarven">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 28" height="24" width="28"><path d="M12 2c6.625 0 12 5.375 12 12 0 5.297-3.437 9.797-8.203 11.391-0.609 0.109-0.828-0.266-0.828-0.578 0-0.391 0.016-1.687 0.016-3.297 0-1.125-0.375-1.844-0.812-2.219 2.672-0.297 5.484-1.313 5.484-5.922 0-1.313-0.469-2.375-1.234-3.219 0.125-0.313 0.531-1.531-0.125-3.187-1-0.313-3.297 1.234-3.297 1.234-0.953-0.266-1.984-0.406-3-0.406s-2.047 0.141-3 0.406c0 0-2.297-1.547-3.297-1.234-0.656 1.656-0.25 2.875-0.125 3.187-0.766 0.844-1.234 1.906-1.234 3.219 0 4.594 2.797 5.625 5.469 5.922-0.344 0.313-0.656 0.844-0.766 1.609-0.688 0.313-2.438 0.844-3.484-1-0.656-1.141-1.844-1.234-1.844-1.234-1.172-0.016-0.078 0.734-0.078 0.734 0.781 0.359 1.328 1.75 1.328 1.75 0.703 2.141 4.047 1.422 4.047 1.422 0 1 0.016 1.937 0.016 2.234 0 0.313-0.219 0.688-0.828 0.578-4.766-1.594-8.203-6.094-8.203-11.391 0-6.625 5.375-12 12-12zM4.547 19.234c0.031-0.063-0.016-0.141-0.109-0.187-0.094-0.031-0.172-0.016-0.203 0.031-0.031 0.063 0.016 0.141 0.109 0.187 0.078 0.047 0.172 0.031 0.203-0.031zM5.031 19.766c0.063-0.047 0.047-0.156-0.031-0.25-0.078-0.078-0.187-0.109-0.25-0.047-0.063 0.047-0.047 0.156 0.031 0.25 0.078 0.078 0.187 0.109 0.25 0.047zM5.5 20.469c0.078-0.063 0.078-0.187 0-0.297-0.063-0.109-0.187-0.156-0.266-0.094-0.078 0.047-0.078 0.172 0 0.281s0.203 0.156 0.266 0.109zM6.156 21.125c0.063-0.063 0.031-0.203-0.063-0.297-0.109-0.109-0.25-0.125-0.313-0.047-0.078 0.063-0.047 0.203 0.063 0.297 0.109 0.109 0.25 0.125 0.313 0.047zM7.047 21.516c0.031-0.094-0.063-0.203-0.203-0.25-0.125-0.031-0.266 0.016-0.297 0.109s0.063 0.203 0.203 0.234c0.125 0.047 0.266 0 0.297-0.094zM8.031 21.594c0-0.109-0.125-0.187-0.266-0.172-0.141 0-0.25 0.078-0.25 0.172 0 0.109 0.109 0.187 0.266 0.172 0.141 0 0.25-0.078 0.25-0.172zM8.937 21.438c-0.016-0.094-0.141-0.156-0.281-0.141-0.141 0.031-0.234 0.125-0.219 0.234 0.016 0.094 0.141 0.156 0.281 0.125s0.234-0.125 0.219-0.219z"></path>
+</svg>
+
+    </a>
+  
+
+  
+    <a id="twitter-link"
+       class="icon" title="Twitter" aria-label="Twitter"
+       href="https://twitter.com/DwarvenYang">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+    </a>
+  
+
+  
+    <a id="email-link"
+       class="icon" title="Email" aria-label="Email"
+       href="mailto:prison.yang@gmail.com">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13.718 10.528c0 .792-.268 1.829-.684 2.642-1.009 1.98-3.063 1.967-3.063-.14 0-.786.27-1.799.687-2.58 1.021-1.925 3.06-1.624 3.06.078zm10.282 1.472c0 6.627-5.373 12-12 12s-12-5.373-12-12 5.373-12 12-12 12 5.373 12 12zm-5-1.194c0-3.246-2.631-5.601-6.256-5.601-4.967 0-7.744 3.149-7.744 7.073 0 3.672 2.467 6.517 7.024 6.517 2.52 0 4.124-.726 5.122-1.288l-.687-.991c-1.022.593-2.251 1.136-4.256 1.136-3.429 0-5.733-2.199-5.733-5.473 0-5.714 6.401-6.758 9.214-5.071 2.624 1.642 2.524 5.578.582 7.083-1.034.826-2.199.799-1.821-.756 0 0 1.212-4.489 1.354-4.975h-1.364l-.271.952c-.278-.785-.943-1.295-1.911-1.295-2.018 0-3.722 2.19-3.722 4.783 0 1.73.913 2.804 2.38 2.804 1.283 0 1.95-.726 2.364-1.373-.3 2.898 5.725 1.557 5.725-3.525z"/></svg>
+    </a>
+  
+
+  <a id="subscribe-link"
+     class="icon" title="Subscribe" aria-label="Subscribe"
+     href="/feed.xml">
+    <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <circle cx="6.18" cy="17.82" r="2.18"/>
+    <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/>
+</svg>
+  </a>
+
+  
+  
+  
+  
+
+  
+    <a id="tags-link"
+       class="icon"
+       title="Tags" aria-label="Tags"
+       href="/tags.html">
+      <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+    </a>
+  
+
+  
+
+  <!-- Optional additional links to insert for icons links -->
+</nav>
+
+</div>
+
+    <main class="container">
+      <header>
+  <h1 class="post-title">利用 Jenkins 实现 Xcode 自动打包</h1>
+</header>
+<div class="content">
+  <div class="post-meta">
+  <span class="post-date">21 Jul 2019</span>
+  <span class="post-categories">
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Jenkins
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Xcode
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Archive
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Packaging
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        iOS
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Enterprise
+      
+    
+      &bull;
+
+      
+      
+      
+
+      
+        Distribution
+      
+    
+  </span>
+</div>
+
+
+  <div class="post-body">
+    <h3 id="jenkins-是什么">Jenkins 是什么?</h3>
+<hr />
+
+<blockquote>
+  <p>Jenkins是一款开源 CI&amp;CD 软件，用于自动化各种任务，包括构建、测试和部署软件。
+Jenkins 支持各种运行方式，可通过系统包、Docker 或者通过一个独立的 Java 程序。</p>
+</blockquote>
+
+<p>Jenkins 是一个 Java 程序，那么安装 Jenkins 就分为两步：</p>
+<ul>
+  <li>安装 Java 环境</li>
+  <li>安装 Jenkins</li>
+</ul>
+
+<p>具体安装方式有两种：</p>
+<ul>
+  <li>手动安装：在 <a href="https://www.java.com">Java</a> 和 <a href="https://jenkins.io">Jenkins</a> 官网下载相应的安装包进行安装</li>
+  <li>通过包管理工具 <a href="https://brew.sh/">Homebrew</a> 进行安装</li>
+</ul>
+
+<p>这里为了方便管理，本文采用 Homebrew 进行安装，手动安装过程稍有差异，不过安装完后 Jenkins 的配置过程完全一致。</p>
+
+<h3 id="安装-jenkins">安装 Jenkins</h3>
+<hr />
+
+<p>没有 Java 环境的话，执行 <code class="highlighter-rouge">brew install jenkins</code> 会提示没有 Java 环境:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ brew <span class="nb">install </span>jenkins
+jenkins: Java 1.8 is required to <span class="nb">install </span>this formula.
+Install AdoptOpenJDK 8 with Homebrew Cask:
+  brew cask <span class="nb">install </span>homebrew/cask-versions/adoptopenjdk8
+Error: An unsatisfied requirement failed this build.
+</code></pre></div></div>
+
+<p>按照提示:</p>
+<ul>
+  <li>执行 <code class="highlighter-rouge">brew cask install homebrew/cask-versions/adoptopenjdk8</code> 安装 Java</li>
+  <li>执行 <code class="highlighter-rouge">brew install jenkins</code> 安装 Jenkins</li>
+</ul>
+
+<h3 id="启动-jenkins">启动 Jenkins</h3>
+<hr />
+
+<p>通过 Homebrew 安装 Jenkins 的 log 来看，可以通过执行 <code class="highlighter-rouge">jenkins</code> 手动启动，也可以通过 <code class="highlighter-rouge">brew services</code> 来启动。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>To have launchd start jenkins now and restart at login:
+  brew services start jenkins
+Or, if you don't want/need a background service you can just run:
+  jenkins
+</code></pre></div></div>
+
+<p>还有一种方式，就是自己手动维护:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 当前用户登录时自动启动 Jenkins</span>
+<span class="nb">ln</span> <span class="nt">-sfv</span> /usr/local/opt/jenkins/homebrew.mxcl.jenkins.plist ~/Library/LaunchAgents
+
+<span class="c"># 手动启动 Jenkins</span>
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
+</code></pre></div></div>
+
+<p>如果需要外部访问，可以把 plist 文件里的 <code class="highlighter-rouge">httpListenAddress</code> 改为广播地址</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">"1.0"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>Label<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;string&gt;</span>homebrew.mxcl.jenkins<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;key&gt;</span>ProgramArguments<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;array&gt;</span>
+      <span class="nt">&lt;string&gt;</span>/usr/libexec/java_home<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>-v<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>1.8<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>--exec<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>java<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>-Dmail.smtp.starttls.enable=true<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>-jar<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>/usr/local/opt/jenkins/libexec/jenkins.war<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>--httpListenAddress=127.0.0.1<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;string&gt;</span>--httpPort=8080<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;/array&gt;</span>
+    <span class="nt">&lt;key&gt;</span>RunAtLoad<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;true/&gt;</span>
+  <span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span>
+</code></pre></div></div>
+
+<p>附上一张安装配置 Jenkins 的终端截图</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/0.png" alt="" /></p>
+
+<h3 id="jenkins-初始化">Jenkins 初始化</h3>
+<hr />
+
+<p>启动了 Jenkins 后，就可以用浏览器打开 plist 配置的 <code class="highlighter-rouge">httpListenAddress</code>:<code class="highlighter-rouge">httpPort</code> 来访问 Jenkins 了</p>
+
+<p>默认为 <a href="localhost:8080">localhost:8080</a></p>
+
+<h4 id="解锁-jenkins">解锁 Jenkins</h4>
+<p>打开网页后经过一段初始化后，会出现如下界面，按照提示找到密码输入即可</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/1.png" alt="" /></p>
+
+<h4 id="安装插件">安装插件</h4>
+<p>可以自己选择插件进行安装，也可以选择安装推荐的插件。如果不太了解，请选安装推荐的插件。</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/2.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/3.png" alt="" /></p>
+
+<h4 id="创建管理员用户">创建管理员用户</h4>
+<p>这里按照自己的要求来配置即可</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/4.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/5.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/6.png" alt="" /></p>
+
+<p>到这里 Jenkins 的初始化就已经完成了</p>
+
+<h3 id="jenkins-基本配置">Jenkins 基本配置</h3>
+<hr />
+
+<h4 id="安装-xcode-打包需要的插件">安装 Xcode 打包需要的插件</h4>
+
+<ul>
+  <li>Keychains and Provisioning Profiles Management</li>
+  <li>Xcode integration</li>
+</ul>
+
+<p>通过点击 <code class="highlighter-rouge">Manage Jenkins</code> &gt; <code class="highlighter-rouge">Manage Plugins</code> 进入插件管理页面，勾选好插件之后点击直接安装即可</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/7.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/8.png" alt="" /></p>
+
+<h4 id="配置-keychains-and-provisioning-profiles-management">配置 Keychains and Provisioning Profiles Management</h4>
+
+<ul>
+  <li>上传login.keychain，具体获取方式如下</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ <span class="nb">ls</span> ~/Library/Keychains
+AE7B340D-384F-56B5-A4A5-91174B979B21
+metadata.keychain-db
+login.keychain-db
+~ <span class="nb">cp</span> ~/Library/Keychains/login.keychain-db ~/Desktop/Jenkins/login.keychain
+</code></pre></div></div>
+
+<ul>
+  <li>添加 Code Signing Identity，获取方式: 打开钥匙串，找到相应的证书，显示简介，细节里的常用名称即为 Code Signing Identity</li>
+  <li>
+    <p>添加 Provisioning Profiles Directory Path，<code class="highlighter-rouge">mobileprovision</code> 文件一般在 <code class="highlighter-rouge">~/Library/MobileDevice/Provisioning\ Profiles</code> 文件夹内</p>
+  </li>
+  <li>上传 Provisioning Profiles，这个根据自己需要选择文件上传即可</li>
+</ul>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/9.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/10.png" alt="" /></p>
+
+<h4 id="配置-jenkins-全局的-path-和-provisioning-profiles-directory-path">配置 Jenkins 全局的 PATH 和 Provisioning Profiles Directory Path</h4>
+<p><code class="highlighter-rouge">Manage Jenkins</code> &gt; <code class="highlighter-rouge">Configure System</code></p>
+
+<ul>
+  <li>PATH：新增键值对 key 为 PATH，value 可以通过命令获得：</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ <span class="nb">echo</span> <span class="nv">$PATH</span>
+/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+</code></pre></div></div>
+
+<ul>
+  <li>Provisioning Profiles Directory Path：路径和上一步一致</li>
+</ul>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/11.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/12.png" alt="" /></p>
+
+<h3 id="打包任务">打包任务</h3>
+<hr />
+
+<h4 id="新建任务">新建任务</h4>
+
+<p>点击左上角的新建按钮，选择 <code class="highlighter-rouge">Freestyle project</code>, 填写任务名称，点击确定。</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/13.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/14.png" alt="" /></p>
+
+<h4 id="任务基本配置">任务基本配置</h4>
+
+<p>在首页点击刚才创建的任务进入任务详情页，再点击配置按钮进入任务配置页</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/15.png" alt="" />
+<img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/16.png" alt="" /></p>
+
+<p>先做好项目的一些基本配置：</p>
+
+<p>忽略旧的构建</p>
+
+<blockquote>
+  <p>一般会选中这个，保持每次构建的独立性</p>
+</blockquote>
+
+<p>给项目添加一些参数</p>
+
+<blockquote>
+  <p>可以在每次触发任务的时候填入一些参数，比如分支名、版本号等等</p>
+</blockquote>
+
+<p>自定义工作空间</p>
+
+<blockquote>
+  <p>一般不需要，默认 Jenkins 会在 <code class="highlighter-rouge">~/.jenkins/workspace</code> 下创建一个和任务名相同的文件夹作为工作空间</p>
+</blockquote>
+
+<p>源码管理</p>
+
+<blockquote>
+  <p>Git、Subversion 等等</p>
+</blockquote>
+
+<p>构建触发器</p>
+
+<blockquote>
+  <p>一些条件触发的自动构建</p>
+</blockquote>
+
+<p>构建环境</p>
+
+<blockquote>
+  <p>构建相关的环境配置项</p>
+</blockquote>
+
+<p>每个项目的配置稍有不同，这里就不细说了，大体参考下图：</p>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/17.png" alt="" /></p>
+
+<h4 id="任务构建配置">任务构建配置</h4>
+
+<p>Xcode 任务有两种构建方式可供选择：</p>
+
+<ul>
+  <li>使用 Xcode 插件：构建 &gt; 添加构建步骤 &gt; Xcode</li>
+</ul>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/18.png" alt="" /></p>
+
+<blockquote>
+  <p>这种方式如果 Xcode 有相关的更新变化，就要依赖于 Jenkins Xcode 插件的更新，所以不太推荐这种构建方式，这里就不多做介绍了</p>
+</blockquote>
+
+<ul>
+  <li>自己编写构建脚本：构建 &gt; 添加构建步骤 &gt; Execute shell</li>
+</ul>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/19.png" alt="" /></p>
+
+<p>脚本的优势在于灵活度高、可定制</p>
+
+<blockquote>
+  <p>比如自动生成 Build Version、pod install、配置一些路径、上传 ipa 到 蒲公英、fir.im、TestFlight 等等</p>
+</blockquote>
+
+<p>主要通过 <code class="highlighter-rouge">xcodebuild</code> 来构建，这里放一个 Demo</p>
+
+<blockquote>
+  <p>打包方式 project 和 workspace 二选一即可</p>
+</blockquote>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+
+<span class="nv">AUTO_BUILD_VERSION</span><span class="o">=</span><span class="si">$(</span><span class="nb">date</span> +<span class="s2">"%Y%m%d%H%M"</span><span class="si">)</span>
+<span class="nv">INFO_PLIST_PATH</span><span class="o">=</span><span class="nv">$WORKSPACE</span>/jenkins/Info.plist
+<span class="nv">PROJECT_NAME</span><span class="o">=</span><span class="nv">$WORKSPACE</span>/jenkins.xcodeproj
+<span class="c"># WORKSPACE_NAME=$WORKSPACE/jenkins.xcworkspace</span>
+<span class="nv">TARGET_NAME</span><span class="o">=</span>jenkins
+<span class="nv">CONFIGURATION_NAME</span><span class="o">=</span>Release
+<span class="nv">ARCHIVE_PATH</span><span class="o">=</span><span class="nv">$WORKSPACE</span>/<span class="nv">$TARGET_NAME</span>.xcarchive
+<span class="nv">IPA_PATH</span><span class="o">=</span><span class="nv">$WORKSPACE</span>/IPA
+<span class="nv">EXPORT_OPTIONS_PATH</span><span class="o">=</span><span class="nv">$WORKSPACE</span>/ExportOptions.plist
+
+/usr/libexec/PlistBuddy <span class="nt">-c</span> <span class="s2">"Set :CFBundleVersion </span><span class="nv">$AUTO_BUILD_VERSION</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$INFO_PLIST_PATH</span><span class="s2">"</span>
+xcodebuild <span class="nt">-project</span> <span class="k">${</span><span class="nv">PROJECT_NAME</span><span class="k">}</span> <span class="nt">-scheme</span> <span class="k">${</span><span class="nv">TARGET_NAME</span><span class="k">}</span> <span class="nt">-archivePath</span> <span class="k">${</span><span class="nv">ARCHIVE_PATH</span><span class="k">}</span> <span class="nt">-configuration</span> <span class="k">${</span><span class="nv">CONFIGURATION_NAME</span><span class="k">}</span> clean archive
+<span class="c"># pod install --project-directory=$WORKSPACE</span>
+<span class="c"># xcodebuild -workspace ${WORKSPACE_NAME} -scheme ${TARGET_NAME} -archivePath ${ARCHIVE_PATH} -configuration ${CONFIGURATION_NAME} clean archive</span>
+xcodebuild <span class="nt">-exportArchive</span> <span class="nt">-archivePath</span> <span class="k">${</span><span class="nv">ARCHIVE_PATH</span><span class="k">}</span> <span class="nt">-exportPath</span> <span class="k">${</span><span class="nv">IPA_PATH</span><span class="k">}</span> <span class="nt">-exportOptionsPlist</span> <span class="k">${</span><span class="nv">EXPORT_OPTIONS_PATH</span><span class="k">}</span> <span class="nt">-allowProvisioningUpdates</span>
+</code></pre></div></div>
+
+<p>ExportOptions.plist 的获取方式</p>
+
+<blockquote>
+  <p>其实 Xcode 手动打包导出的文件里就包含了该文件，直接拿过来用就好了</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">"1.0"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;dict&gt;</span>
+  <span class="nt">&lt;key&gt;</span>compileBitcode<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;false/&gt;</span>
+  <span class="nt">&lt;key&gt;</span>destination<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>export<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>method<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>enterprise<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>provisioningProfiles<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>bundle.id<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;string&gt;</span>name<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;/dict&gt;</span>
+  <span class="nt">&lt;key&gt;</span>signingCertificate<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>iPhone Distribution<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>signingStyle<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>manual<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>stripSwiftSymbols<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;true/&gt;</span>
+  <span class="nt">&lt;key&gt;</span>teamID<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>XXXXXXXXXX<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>thinning<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span><span class="ni">&amp;lt;</span>none<span class="ni">&amp;gt;</span><span class="nt">&lt;/string&gt;</span>
+<span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span>
+</code></pre></div></div>
+
+<h4 id="任务构建后操作">任务构建后操作</h4>
+
+<p>在构建完成后按自己需要添加一些处理操作，比如发送通知邮件、做一些Git操作等等</p>
+
+<blockquote>
+  <p>都是一些已经集成好的功能，如不满足需求，Jenkins 拥有强大的插件库，可以通过寻找合适的插件解决，实在不行可以在上一步的最后添加自己编写的 shell 脚本解决</p>
+</blockquote>
+
+<p><img src="https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/20.png" alt="" /></p>
+
+<h3 id="end"><em>End~!</em></h3>
+
+    
+
+
+
+<div class="post-tags">
+  
+    
+    <a href="/tags.html#jenkins">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Jenkins</span>
+    </a>
+  
+    
+    <a href="/tags.html#xcode">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Xcode</span>
+    </a>
+  
+    
+    <a href="/tags.html#archive">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Archive</span>
+    </a>
+  
+    
+    <a href="/tags.html#packaging">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Packaging</span>
+    </a>
+  
+    
+    <a href="/tags.html#ios">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">iOS</span>
+    </a>
+  
+    
+    <a href="/tags.html#enterprise">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Enterprise</span>
+    </a>
+  
+    
+    <a href="/tags.html#distribution">
+    
+      <span class="icon">
+        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+      </span>&nbsp;<span class="tag-name">Distribution</span>
+    </a>
+  
+</div>
+  </div>
+
+  
+  <section class="comments">
+    <h2>Comments</h2>
+    
+  <div id="disqus_thread">
+    <button class="disqus-load" onClick="loadDisqusComments()">
+      Load Comments
+    </button>
+  </div>
+  <script>
+
+  /**
+  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW
+  *  TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT:s
+  *  https://disqus.com/admin/universalcode/#configuration-variables
+  */
+  var disqus_config = function () {
+    this.page.url = "https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html";
+    this.page.identifier = "" ||
+                           "https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html";
+  }
+  function loadDisqusComments() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://DwarvenYang.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  </script>
+  <noscript>
+    Please enable JavaScript to view the
+    <a href="https://disqus.com/?ref_noscript">comments powered by Disqus</a>.
+  </noscript>
+
+
+
+  </section>
+
+  <section class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts-list">
+    
+      <li>
+        <h3>
+          <a href="/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html">
+            iOS 企业发布
+            <small>07 Jul 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/ios/certificate/code%20signing/2019/06/06/%E7%BB%86%E8%AF%B4-iOS-%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D.html">
+            细说 iOS 代码签名
+            <small>06 Jun 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/cocoapods/2018/01/29/MARK-CocoaPods-apps-touched-1024.html">
+            MARK: CocoaPods apps touched 1024
+            <small>29 Jan 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</section>
+
+</div>
+
+    </main>
+
+    <!-- Optional footer content -->
+
+  </body>
+</html>

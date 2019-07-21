@@ -6,9 +6,378 @@
 </description>
     <link>https://dwarven.github.io/</link>
     <atom:link href="https://dwarven.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 18 Jul 2019 19:11:04 +0800</pubDate>
-    <lastBuildDate>Thu, 18 Jul 2019 19:11:04 +0800</lastBuildDate>
+    <pubDate>Sun, 21 Jul 2019 16:42:07 +0800</pubDate>
+    <lastBuildDate>Sun, 21 Jul 2019 16:42:07 +0800</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>利用 Jenkins 实现 Xcode 自动打包</title>
+        <description>&lt;h3 id=&quot;jenkins-是什么&quot;&gt;Jenkins 是什么?&lt;/h3&gt;
+&lt;hr /&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Jenkins是一款开源 CI&amp;amp;CD 软件，用于自动化各种任务，包括构建、测试和部署软件。
+Jenkins 支持各种运行方式，可通过系统包、Docker 或者通过一个独立的 Java 程序。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Jenkins 是一个 Java 程序，那么安装 Jenkins 就分为两步：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;安装 Java 环境&lt;/li&gt;
+  &lt;li&gt;安装 Jenkins&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;具体安装方式有两种：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;手动安装：在 &lt;a href=&quot;https://www.java.com&quot;&gt;Java&lt;/a&gt; 和 &lt;a href=&quot;https://jenkins.io&quot;&gt;Jenkins&lt;/a&gt; 官网下载相应的安装包进行安装&lt;/li&gt;
+  &lt;li&gt;通过包管理工具 &lt;a href=&quot;https://brew.sh/&quot;&gt;Homebrew&lt;/a&gt; 进行安装&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这里为了方便管理，本文采用 Homebrew 进行安装，手动安装过程稍有差异，不过安装完后 Jenkins 的配置过程完全一致。&lt;/p&gt;
+
+&lt;h3 id=&quot;安装-jenkins&quot;&gt;安装 Jenkins&lt;/h3&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;没有 Java 环境的话，执行 &lt;code class=&quot;highlighter-rouge&quot;&gt;brew install jenkins&lt;/code&gt; 会提示没有 Java 环境:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;~ brew &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;jenkins
+jenkins: Java 1.8 is required to &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;this formula.
+Install AdoptOpenJDK 8 with Homebrew Cask:
+  brew cask &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;homebrew/cask-versions/adoptopenjdk8
+Error: An unsatisfied requirement failed this build.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;按照提示:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;执行 &lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install homebrew/cask-versions/adoptopenjdk8&lt;/code&gt; 安装 Java&lt;/li&gt;
+  &lt;li&gt;执行 &lt;code class=&quot;highlighter-rouge&quot;&gt;brew install jenkins&lt;/code&gt; 安装 Jenkins&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;启动-jenkins&quot;&gt;启动 Jenkins&lt;/h3&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;通过 Homebrew 安装 Jenkins 的 log 来看，可以通过执行 &lt;code class=&quot;highlighter-rouge&quot;&gt;jenkins&lt;/code&gt; 手动启动，也可以通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;brew services&lt;/code&gt; 来启动。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;To have launchd start jenkins now and restart at login:
+  brew services start jenkins
+Or, if you don't want/need a background service you can just run:
+  jenkins
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;还有一种方式，就是自己手动维护:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 当前用户登录时自动启动 Jenkins&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sfv&lt;/span&gt; /usr/local/opt/jenkins/homebrew.mxcl.jenkins.plist ~/Library/LaunchAgents
+
+&lt;span class=&quot;c&quot;&gt;# 手动启动 Jenkins&lt;/span&gt;
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;如果需要外部访问，可以把 plist 文件里的 &lt;code class=&quot;highlighter-rouge&quot;&gt;httpListenAddress&lt;/code&gt; 改为广播地址&lt;/p&gt;
+
+&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;&amp;lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;plist&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;version=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;1.0&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;Label&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;homebrew.mxcl.jenkins&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;ProgramArguments&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;array&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;/usr/libexec/java_home&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-v&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;1.8&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--exec&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;java&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Dmail.smtp.starttls.enable=true&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-jar&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;/usr/local/opt/jenkins/libexec/jenkins.war&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--httpListenAddress=127.0.0.1&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--httpPort=8080&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/array&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;RunAtLoad&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;true/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/plist&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;附上一张安装配置 Jenkins 的终端截图&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/0.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;jenkins-初始化&quot;&gt;Jenkins 初始化&lt;/h3&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;启动了 Jenkins 后，就可以用浏览器打开 plist 配置的 &lt;code class=&quot;highlighter-rouge&quot;&gt;httpListenAddress&lt;/code&gt;:&lt;code class=&quot;highlighter-rouge&quot;&gt;httpPort&lt;/code&gt; 来访问 Jenkins 了&lt;/p&gt;
+
+&lt;p&gt;默认为 &lt;a href=&quot;localhost:8080&quot;&gt;localhost:8080&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;解锁-jenkins&quot;&gt;解锁 Jenkins&lt;/h4&gt;
+&lt;p&gt;打开网页后经过一段初始化后，会出现如下界面，按照提示找到密码输入即可&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;安装插件&quot;&gt;安装插件&lt;/h4&gt;
+&lt;p&gt;可以自己选择插件进行安装，也可以选择安装推荐的插件。如果不太了解，请选安装推荐的插件。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/2.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;创建管理员用户&quot;&gt;创建管理员用户&lt;/h4&gt;
+&lt;p&gt;这里按照自己的要求来配置即可&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/4.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/5.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;到这里 Jenkins 的初始化就已经完成了&lt;/p&gt;
+
+&lt;h3 id=&quot;jenkins-基本配置&quot;&gt;Jenkins 基本配置&lt;/h3&gt;
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;安装-xcode-打包需要的插件&quot;&gt;安装 Xcode 打包需要的插件&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Keychains and Provisioning Profiles Management&lt;/li&gt;
+  &lt;li&gt;Xcode integration&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;通过点击 &lt;code class=&quot;highlighter-rouge&quot;&gt;Manage Jenkins&lt;/code&gt; &amp;gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Manage Plugins&lt;/code&gt; 进入插件管理页面，勾选好插件之后点击直接安装即可&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/7.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;配置-keychains-and-provisioning-profiles-management&quot;&gt;配置 Keychains and Provisioning Profiles Management&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;上传login.keychain，具体获取方式如下&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;~ &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; ~/Library/Keychains
+AE7B340D-384F-56B5-A4A5-91174B979B21
+metadata.keychain-db
+login.keychain-db
+~ &lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; ~/Library/Keychains/login.keychain-db ~/Desktop/Jenkins/login.keychain
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;添加 Code Signing Identity，获取方式: 打开钥匙串，找到相应的证书，显示简介，细节里的常用名称即为 Code Signing Identity&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;添加 Provisioning Profiles Directory Path，&lt;code class=&quot;highlighter-rouge&quot;&gt;mobileprovision&lt;/code&gt; 文件一般在 &lt;code class=&quot;highlighter-rouge&quot;&gt;~/Library/MobileDevice/Provisioning\ Profiles&lt;/code&gt; 文件夹内&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;上传 Provisioning Profiles，这个根据自己需要选择文件上传即可&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/9.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/10.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;配置-jenkins-全局的-path-和-provisioning-profiles-directory-path&quot;&gt;配置 Jenkins 全局的 PATH 和 Provisioning Profiles Directory Path&lt;/h4&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Manage Jenkins&lt;/code&gt; &amp;gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Configure System&lt;/code&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PATH：新增键值对 key 为 PATH，value 可以通过命令获得：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;~ &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;
+/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Provisioning Profiles Directory Path：路径和上一步一致&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/11.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;打包任务&quot;&gt;打包任务&lt;/h3&gt;
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;新建任务&quot;&gt;新建任务&lt;/h4&gt;
+
+&lt;p&gt;点击左上角的新建按钮，选择 &lt;code class=&quot;highlighter-rouge&quot;&gt;Freestyle project&lt;/code&gt;, 填写任务名称，点击确定。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/13.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/14.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;任务基本配置&quot;&gt;任务基本配置&lt;/h4&gt;
+
+&lt;p&gt;在首页点击刚才创建的任务进入任务详情页，再点击配置按钮进入任务配置页&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/15.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/16.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;先做好项目的一些基本配置：&lt;/p&gt;
+
+&lt;p&gt;忽略旧的构建&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;一般会选中这个，保持每次构建的独立性&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;给项目添加一些参数&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;可以在每次触发任务的时候填入一些参数，比如分支名、版本号等等&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;自定义工作空间&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;一般不需要，默认 Jenkins 会在 &lt;code class=&quot;highlighter-rouge&quot;&gt;~/.jenkins/workspace&lt;/code&gt; 下创建一个和任务名相同的文件夹作为工作空间&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;源码管理&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Git、Subversion 等等&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;构建触发器&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;一些条件触发的自动构建&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;构建环境&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;构建相关的环境配置项&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;每个项目的配置稍有不同，这里就不细说了，大体参考下图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/17.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;任务构建配置&quot;&gt;任务构建配置&lt;/h4&gt;
+
+&lt;p&gt;Xcode 任务有两种构建方式可供选择：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用 Xcode 插件：构建 &amp;gt; 添加构建步骤 &amp;gt; Xcode&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/18.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;这种方式如果 Xcode 有相关的更新变化，就要依赖于 Jenkins Xcode 插件的更新，所以不太推荐这种构建方式，这里就不多做介绍了&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;自己编写构建脚本：构建 &amp;gt; 添加构建步骤 &amp;gt; Execute shell&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/19.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;脚本的优势在于灵活度高、可定制&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;比如自动生成 Build Version、pod install、配置一些路径、上传 ipa 到 蒲公英、fir.im、TestFlight 等等&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;主要通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;xcodebuild&lt;/code&gt; 来构建，这里放一个 Demo&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;打包方式 project 和 workspace 二选一即可&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;AUTO_BUILD_VERSION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt; +&lt;span class=&quot;s2&quot;&gt;&quot;%Y%m%d%H%M&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;INFO_PLIST_PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$WORKSPACE&lt;/span&gt;/jenkins/Info.plist
+&lt;span class=&quot;nv&quot;&gt;PROJECT_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$WORKSPACE&lt;/span&gt;/jenkins.xcodeproj
+&lt;span class=&quot;c&quot;&gt;# WORKSPACE_NAME=$WORKSPACE/jenkins.xcworkspace&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;TARGET_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;jenkins
+&lt;span class=&quot;nv&quot;&gt;CONFIGURATION_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Release
+&lt;span class=&quot;nv&quot;&gt;ARCHIVE_PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$WORKSPACE&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$TARGET_NAME&lt;/span&gt;.xcarchive
+&lt;span class=&quot;nv&quot;&gt;IPA_PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$WORKSPACE&lt;/span&gt;/IPA
+&lt;span class=&quot;nv&quot;&gt;EXPORT_OPTIONS_PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$WORKSPACE&lt;/span&gt;/ExportOptions.plist
+
+/usr/libexec/PlistBuddy &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Set :CFBundleVersion &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$AUTO_BUILD_VERSION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$INFO_PLIST_PATH&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+xcodebuild &lt;span class=&quot;nt&quot;&gt;-project&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PROJECT_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-scheme&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TARGET_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-archivePath&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;ARCHIVE_PATH&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-configuration&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CONFIGURATION_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; clean archive
+&lt;span class=&quot;c&quot;&gt;# pod install --project-directory=$WORKSPACE&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# xcodebuild -workspace ${WORKSPACE_NAME} -scheme ${TARGET_NAME} -archivePath ${ARCHIVE_PATH} -configuration ${CONFIGURATION_NAME} clean archive&lt;/span&gt;
+xcodebuild &lt;span class=&quot;nt&quot;&gt;-exportArchive&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-archivePath&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;ARCHIVE_PATH&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-exportPath&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;IPA_PATH&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-exportOptionsPlist&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;EXPORT_OPTIONS_PATH&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-allowProvisioningUpdates&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ExportOptions.plist 的获取方式&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;其实 Xcode 手动打包导出的文件里就包含了该文件，直接拿过来用就好了&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;&amp;lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;plist&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;version=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;1.0&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;compileBitcode&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;false/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;destination&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;export&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;method&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;enterprise&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;provisioningProfiles&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;bundle.id&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;name&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;signingCertificate&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;iPhone Distribution&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;signingStyle&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;manual&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;stripSwiftSymbols&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;true/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;teamID&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;XXXXXXXXXX&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;thinning&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;&lt;span class=&quot;ni&quot;&gt;&amp;amp;lt;&lt;/span&gt;none&lt;span class=&quot;ni&quot;&gt;&amp;amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/plist&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;任务构建后操作&quot;&gt;任务构建后操作&lt;/h4&gt;
+
+&lt;p&gt;在构建完成后按自己需要添加一些处理操作，比如发送通知邮件、做一些Git操作等等&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;都是一些已经集成好的功能，如不满足需求，Jenkins 拥有强大的插件库，可以通过寻找合适的插件解决，实在不行可以在上一步的最后添加自己编写的 shell 脚本解决&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Jenkins-Xcode-Auto-Packaging/20.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;end&quot;&gt;&lt;em&gt;End~!&lt;/em&gt;&lt;/h3&gt;
+</description>
+        <pubDate>Sun, 21 Jul 2019 10:00:00 +0800</pubDate>
+        <link>https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html</link>
+        <guid isPermaLink="true">https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html</guid>
+        
+        <category>Jenkins</category>
+        
+        <category>Xcode</category>
+        
+        <category>Archive</category>
+        
+        <category>Packaging</category>
+        
+        <category>iOS</category>
+        
+        <category>Enterprise</category>
+        
+        <category>Distribution</category>
+        
+        
+        <category>Jenkins</category>
+        
+        <category>Xcode</category>
+        
+        <category>Archive</category>
+        
+        <category>Packaging</category>
+        
+        <category>iOS</category>
+        
+        <category>Enterprise</category>
+        
+        <category>Distribution</category>
+        
+      </item>
     
       <item>
         <title>iOS 企业发布</title>
@@ -1623,53 +1992,6 @@ Entitlements &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;424 bytes&lt;span cla
         <category>Certificate</category>
         
         <category>Invalid</category>
-        
-      </item>
-    
-      <item>
-        <title>iOS 利用 Shape Layer 使 View 部分区域透明</title>
-        <description>&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/iOS-Shape-Layer/0.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screenWidth&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIScreen&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;mainScreen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screenHeight&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIScreen&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;mainScreen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;UIButton&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;button&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIButton&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;button&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRectMake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screenWidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screenHeight&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)];&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;button&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setBackgroundColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIColor&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;colorWithWhite&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;view&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;addSubview&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;button&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;//create path&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;UIBezierPath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIBezierPath&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bezierPathWithRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRectMake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screenWidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screenHeight&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)];&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;// MARK: circlePath&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;appendPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIBezierPath&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bezierPathWithArcCenter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGPointMake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;screenWidth&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;radius&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;startAngle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endAngle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M_PI&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;clockwise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;// MARK: roundRectanglePath&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;appendPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIBezierPath&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bezierPathWithRoundedRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRectMake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screenWidth&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cornerRadius&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bezierPathByReversingPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;CAShapeLayer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shapeLayer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CAShapeLayer&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;layer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;shapeLayer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;button&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;layer&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setMask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shapeLayer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-</description>
-        <pubDate>Wed, 26 Nov 2014 10:00:00 +0800</pubDate>
-        <link>https://dwarven.github.io/ios/shape/layer/2014/11/26/iOS-Shape-Layer.html</link>
-        <guid isPermaLink="true">https://dwarven.github.io/ios/shape/layer/2014/11/26/iOS-Shape-Layer.html</guid>
-        
-        <category>iOS</category>
-        
-        <category>Shape</category>
-        
-        <category>Layer</category>
-        
-        
-        <category>iOS</category>
-        
-        <category>Shape</category>
-        
-        <category>Layer</category>
         
       </item>
     
