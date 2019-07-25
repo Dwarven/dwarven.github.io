@@ -417,8 +417,9 @@ launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
 <h4 id="安装-xcode-打包需要的插件">安装 Xcode 打包需要的插件</h4>
 
 <ul>
-  <li>Keychains and Provisioning Profiles Management</li>
-  <li>Xcode integration</li>
+  <li><a href="https://wiki.jenkins.io/display/JENKINS/Keychains+and+Provisioning+Profiles+Plugin">Keychains and Provisioning Profiles Management</a></li>
+  <li><a href="https://wiki.jenkins.io/display/JENKINS/Xcode+Plugin">Xcode integration</a></li>
+  <li><a href="https://wiki.jenkins.io/display/JENKINS/Role+Strategy+Plugin">Role-based Authorization Strategy</a></li>
 </ul>
 
 <p>通过点击 <code class="highlighter-rouge">Manage Jenkins</code> &gt; <code class="highlighter-rouge">Manage Plugins</code> 进入插件管理页面，勾选好插件之后点击直接安装即可</p>
@@ -596,8 +597,8 @@ xcodebuild <span class="nt">-exportArchive</span> <span class="nt">-archivePath<
   <span class="nt">&lt;string&gt;</span>enterprise<span class="nt">&lt;/string&gt;</span>
   <span class="nt">&lt;key&gt;</span>provisioningProfiles<span class="nt">&lt;/key&gt;</span>
   <span class="nt">&lt;dict&gt;</span>
-    <span class="nt">&lt;key&gt;</span>bundle.id<span class="nt">&lt;/key&gt;</span>
-    <span class="nt">&lt;string&gt;</span>name<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;key&gt;</span>app.bundle.id<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;string&gt;</span>Provisioning Profile Name<span class="nt">&lt;/string&gt;</span>
   <span class="nt">&lt;/dict&gt;</span>
   <span class="nt">&lt;key&gt;</span>signingCertificate<span class="nt">&lt;/key&gt;</span>
   <span class="nt">&lt;string&gt;</span>iPhone Distribution<span class="nt">&lt;/string&gt;</span>
@@ -611,6 +612,50 @@ xcodebuild <span class="nt">-exportArchive</span> <span class="nt">-archivePath<
   <span class="nt">&lt;string&gt;</span><span class="ni">&amp;lt;</span>none<span class="ni">&amp;gt;</span><span class="nt">&lt;/string&gt;</span>
 <span class="nt">&lt;/dict&gt;</span>
 <span class="nt">&lt;/plist&gt;</span>
+</code></pre></div></div>
+
+<p>还有一种方式就是利用 build + PackageApplication 打包，不过这种方式因为 PackageApplication 被弃用了，所以有坑，除非特殊情况不推荐使用</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">TARGET_NAME</span><span class="o">=</span>XXX
+<span class="nv">WORKSPACE_NAME</span><span class="o">=</span>XXX.xcworkspace
+<span class="nv">CONFIGURATION_NAME</span><span class="o">=</span>Release
+<span class="nv">CODE_SIGN_IDENTITY</span><span class="o">=</span><span class="s2">"iPhone Distribution: XXX Co., Ltd."</span>
+<span class="nv">IPA_PATH</span><span class="o">=</span><span class="nv">$WORKSPACE</span>/IPA
+xcodebuild <span class="nt">-workspace</span> <span class="k">${</span><span class="nv">WORKSPACE_NAME</span><span class="k">}</span>  <span class="nt">-scheme</span> <span class="k">${</span><span class="nv">TARGET_NAME</span><span class="k">}</span> <span class="nt">-sdk</span> iphoneos <span class="nt">-configuration</span> <span class="k">${</span><span class="nv">CONFIGURATION_NAME</span><span class="k">}</span> <span class="nv">PBXBuildsContinueAfterErrors</span><span class="o">=</span>NO <span class="nv">CODE_SIGN_IDENTITY</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">CODE_SIGN_IDENTITY</span><span class="k">}</span><span class="s2">"</span> <span class="nv">SYMROOT</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">WORKSPACE</span><span class="k">}</span><span class="s2">"</span> clean build
+
+<span class="k">if</span> <span class="o">[</span> <span class="o">!</span> <span class="nt">-d</span> <span class="nv">$IPA_PATH</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nv">$IPA_PATH</span>
+<span class="k">fi
+
+</span>xcrun <span class="nt">-sdk</span> iphoneos PackageApplication <span class="nt">-v</span> <span class="s2">"</span><span class="nv">$WORKSPACE</span><span class="s2">/Debug-iphoneos/XXX.app"</span> <span class="nt">-o</span> <span class="s2">"</span><span class="nv">$IPA_PATH</span><span class="s2">/XXX.ipa"</span>
+</code></pre></div></div>
+
+<ul>
+  <li>坑在此，如果使用 PackageApplication 的话会提示</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xcrun: error: unable to find utility <span class="s2">"PackageApplication"</span>, not a developer tool or <span class="k">in </span>PATH
+</code></pre></div></div>
+
+<ul>
+  <li>原因：在 Xcode 8.3 的版本 PackageApplication 被弃用了</li>
+  <li>解决办法：将 Xcode 8.2.1 的 PackageApplication 拷贝过来使用</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 我这里准备了一个 Xcode 8.2.1 的 PackageApplication 的备份</span>
+<span class="c"># https://gist.github.com/Dwarven/b75f8a8c593d5e1faff51e6d4e179542</span>
+<span class="c"># 将此文件保存为 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/PackageApplication</span>
+<span class="c"># 并添加执行权限 chmod +x</span>
+<span class="c"># 下边是两条命令，可直接使用</span>
+<span class="nb">sudo </span>curl <span class="nt">-fsSL</span> https://gist.github.com/Dwarven/b75f8a8c593d5e1faff51e6d4e179542/raw/8b1d6a2b1159223cd54d1ff276e854e333405b6c/PackageApplication <span class="nt">-o</span> /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/PackageApplication
+<span class="nb">sudo chmod</span> +x /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/PackageApplication
+</code></pre></div></div>
+
+<p>如果需要上传到 TestFlight 的话 可以使用 <code class="highlighter-rouge">altool</code></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/Applications/Xcode.app/Contents/Applications/Application Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool <span class="nt">--validate-app</span> <span class="nt">-f</span> /Path/To/Your/IPA/xxx.ipa <span class="nt">-t</span> osx|ios|appletvos <span class="nt">-u</span> itunesconnectUserName <span class="nt">-p</span> itunesconnectPassword <span class="nt">--output-format</span> xml
+/Applications/Xcode.app/Contents/Applications/Application Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool <span class="nt">--upload-app</span> <span class="nt">-f</span> /Path/To/Your/IPA/xxx.ipa <span class="nt">-t</span> osx|ios|appletvos <span class="nt">-u</span> itunesconnectUserName <span class="nt">-p</span> itunesconnectPassword <span class="nt">--output-format</span> xml
+
 </code></pre></div></div>
 
 <h4 id="任务构建后操作">任务构建后操作</h4>

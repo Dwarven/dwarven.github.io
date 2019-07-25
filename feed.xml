@@ -6,8 +6,8 @@
 </description>
     <link>https://dwarven.github.io/</link>
     <atom:link href="https://dwarven.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 21 Jul 2019 16:42:07 +0800</pubDate>
-    <lastBuildDate>Sun, 21 Jul 2019 16:42:07 +0800</lastBuildDate>
+    <pubDate>Thu, 25 Jul 2019 18:30:29 +0800</pubDate>
+    <lastBuildDate>Thu, 25 Jul 2019 18:30:29 +0800</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -136,8 +136,9 @@ launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
 &lt;h4 id=&quot;安装-xcode-打包需要的插件&quot;&gt;安装 Xcode 打包需要的插件&lt;/h4&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;Keychains and Provisioning Profiles Management&lt;/li&gt;
-  &lt;li&gt;Xcode integration&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://wiki.jenkins.io/display/JENKINS/Keychains+and+Provisioning+Profiles+Plugin&quot;&gt;Keychains and Provisioning Profiles Management&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://wiki.jenkins.io/display/JENKINS/Xcode+Plugin&quot;&gt;Xcode integration&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://wiki.jenkins.io/display/JENKINS/Role+Strategy+Plugin&quot;&gt;Role-based Authorization Strategy&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;通过点击 &lt;code class=&quot;highlighter-rouge&quot;&gt;Manage Jenkins&lt;/code&gt; &amp;gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Manage Plugins&lt;/code&gt; 进入插件管理页面，勾选好插件之后点击直接安装即可&lt;/p&gt;
@@ -315,8 +316,8 @@ xcodebuild &lt;span class=&quot;nt&quot;&gt;-exportArchive&lt;/span&gt; &lt;span
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;enterprise&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;provisioningProfiles&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;bundle.id&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;name&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;app.bundle.id&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;Provisioning Profile Name&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;signingCertificate&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;iPhone Distribution&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
@@ -330,6 +331,50 @@ xcodebuild &lt;span class=&quot;nt&quot;&gt;-exportArchive&lt;/span&gt; &lt;span
   &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;&lt;span class=&quot;ni&quot;&gt;&amp;amp;lt;&lt;/span&gt;none&lt;span class=&quot;ni&quot;&gt;&amp;amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/plist&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;还有一种方式就是利用 build + PackageApplication 打包，不过这种方式因为 PackageApplication 被弃用了，所以有坑，除非特殊情况不推荐使用&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;TARGET_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;XXX
+&lt;span class=&quot;nv&quot;&gt;WORKSPACE_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;XXX.xcworkspace
+&lt;span class=&quot;nv&quot;&gt;CONFIGURATION_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Release
+&lt;span class=&quot;nv&quot;&gt;CODE_SIGN_IDENTITY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;iPhone Distribution: XXX Co., Ltd.&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;IPA_PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$WORKSPACE&lt;/span&gt;/IPA
+xcodebuild &lt;span class=&quot;nt&quot;&gt;-workspace&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;WORKSPACE_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;  &lt;span class=&quot;nt&quot;&gt;-scheme&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TARGET_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sdk&lt;/span&gt; iphoneos &lt;span class=&quot;nt&quot;&gt;-configuration&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CONFIGURATION_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;PBXBuildsContinueAfterErrors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO &lt;span class=&quot;nv&quot;&gt;CODE_SIGN_IDENTITY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CODE_SIGN_IDENTITY&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;SYMROOT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;WORKSPACE&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; clean build
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$IPA_PATH&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$IPA_PATH&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi
+
+&lt;/span&gt;xcrun &lt;span class=&quot;nt&quot;&gt;-sdk&lt;/span&gt; iphoneos PackageApplication &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$WORKSPACE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/Debug-iphoneos/XXX.app&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$IPA_PATH&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/XXX.ipa&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;坑在此，如果使用 PackageApplication 的话会提示&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xcrun: error: unable to find utility &lt;span class=&quot;s2&quot;&gt;&quot;PackageApplication&quot;&lt;/span&gt;, not a developer tool or &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;PATH
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;原因：在 Xcode 8.3 的版本 PackageApplication 被弃用了&lt;/li&gt;
+  &lt;li&gt;解决办法：将 Xcode 8.2.1 的 PackageApplication 拷贝过来使用&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 我这里准备了一个 Xcode 8.2.1 的 PackageApplication 的备份&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# https://gist.github.com/Dwarven/b75f8a8c593d5e1faff51e6d4e179542&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 将此文件保存为 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/PackageApplication&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 并添加执行权限 chmod +x&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 下边是两条命令，可直接使用&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;curl &lt;span class=&quot;nt&quot;&gt;-fsSL&lt;/span&gt; https://gist.github.com/Dwarven/b75f8a8c593d5e1faff51e6d4e179542/raw/8b1d6a2b1159223cd54d1ff276e854e333405b6c/PackageApplication &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/PackageApplication
+&lt;span class=&quot;nb&quot;&gt;sudo chmod&lt;/span&gt; +x /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/PackageApplication
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;如果需要上传到 TestFlight 的话 可以使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;altool&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/Applications/Xcode.app/Contents/Applications/Application Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool &lt;span class=&quot;nt&quot;&gt;--validate-app&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; /Path/To/Your/IPA/xxx.ipa &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; osx|ios|appletvos &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; itunesconnectUserName &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; itunesconnectPassword &lt;span class=&quot;nt&quot;&gt;--output-format&lt;/span&gt; xml
+/Applications/Xcode.app/Contents/Applications/Application Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool &lt;span class=&quot;nt&quot;&gt;--upload-app&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; /Path/To/Your/IPA/xxx.ipa &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; osx|ios|appletvos &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; itunesconnectUserName &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; itunesconnectPassword &lt;span class=&quot;nt&quot;&gt;--output-format&lt;/span&gt; xml
+
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h4 id=&quot;任务构建后操作&quot;&gt;任务构建后操作&lt;/h4&gt;
