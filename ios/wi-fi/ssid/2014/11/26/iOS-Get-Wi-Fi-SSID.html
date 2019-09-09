@@ -43,7 +43,7 @@
 
   <!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>iOS 获取当前 Wi-Fi 的 SSID | Dwarven</title>
-<meta name="generator" content="Jekyll v3.8.5" />
+<meta name="generator" content="Jekyll v3.8.6" />
 <meta property="og:title" content="iOS 获取当前 Wi-Fi 的 SSID" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="#import &lt;SystemConfiguration/CaptiveNetwork.h&gt; - (NSString *)currentWifiSSID { // Does not work on the simulator. NSString *ssid = nil; NSArray *ifs = (__bridge_transfer id)CNCopySupportedInterfaces(); for (NSString *ifnam in ifs) { NSDictionary *info = (__bridge_transfer id)CNCopyCurrentNetworkInfo((__bridge CFStringRef)ifnam); if (info[@&quot;SSID&quot;]) { ssid = info[@&quot;SSID&quot;]; } } return ssid; }" />
@@ -355,6 +355,15 @@
     
       <li>
         <h3>
+          <a href="/frp/proxy/reverse-proxy/nat/firewall/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/2019/09/05/FRP.html">
+            公司内的 FRP 应用
+            <small>05 Sep 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
           <a href="/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html">
             利用 Jenkins 实现 Xcode 自动打包
             <small>21 Jul 2019</small>
@@ -367,15 +376,6 @@
           <a href="/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html">
             iOS 企业发布
             <small>07 Jul 2019</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/ios/certificate/code%20signing/2019/06/06/%E7%BB%86%E8%AF%B4-iOS-%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D.html">
-            细说 iOS 代码签名
-            <small>06 Jun 2019</small>
           </a>
         </h3>
       </li>

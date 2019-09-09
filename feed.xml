@@ -6,9 +6,149 @@
 </description>
     <link>https://dwarven.github.io/</link>
     <atom:link href="https://dwarven.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 25 Jul 2019 18:30:29 +0800</pubDate>
-    <lastBuildDate>Thu, 25 Jul 2019 18:30:29 +0800</lastBuildDate>
-    <generator>Jekyll v3.8.5</generator>
+    <pubDate>Mon, 09 Sep 2019 19:03:19 +0800</pubDate>
+    <lastBuildDate>Mon, 09 Sep 2019 19:03:19 +0800</lastBuildDate>
+    <generator>Jekyll v3.8.6</generator>
+    
+      <item>
+        <title>公司内的 FRP 应用</title>
+        <description>&lt;h3 id=&quot;1-内网访问&quot;&gt;1. 内网访问&lt;/h3&gt;
+
+&lt;h4 id=&quot;具体场景&quot;&gt;具体场景&lt;/h4&gt;
+
+&lt;p&gt;在公司内有两台 Jenkins 机器，只有一台有固定 IP、另一台没有固定 IP（公司内申请固定 IP 需要层层审核），为了规避审核的麻烦，这里选择曲线救国的方案：&lt;a href=&quot;https://github.com/fatedier/frp&quot;&gt;FRP&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;实施方案&quot;&gt;实施方案&lt;/h4&gt;
+
+&lt;p&gt;首先假设已有的固定 IP 为 &lt;code class=&quot;highlighter-rouge&quot;&gt;Static_IP&lt;/code&gt;，Jenkins 均采用默认端口号 &lt;code class=&quot;highlighter-rouge&quot;&gt;8080&lt;/code&gt;，那么有固定 IP 的 Jenkins 访问地址即为：&lt;code class=&quot;highlighter-rouge&quot;&gt;http://Static_IP:8080&lt;/code&gt;，而另一台机器的 IP 不固定，需要我们最终以 &lt;code class=&quot;highlighter-rouge&quot;&gt;http://Static_IP:8081&lt;/code&gt;（另一非 8080 端口，比如这里用的 8081）的方式进行访问。就这个需求来说，需要有固定 IP 的机器作为 FRP Server，没有固定 IP 的机器作为 FRP Client。另外还有个需求就是可以通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh user@Static_IP -p 6000&lt;/code&gt; 登录到没有固定 IP 的机器上（ssh 端口这里定为 6000），可采用 tcp 端口转发来实现。具体配置如下：&lt;/p&gt;
+
+&lt;p&gt;Server - frps.ini:&lt;/p&gt;
+
+&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;[common]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;bind_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;7000&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;vhost_http_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8081&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Client - frpc.ini:&lt;/p&gt;
+
+&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;[common]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;server_addr&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Static_IP&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;server_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;7000&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;[ssh]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;tcp&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_ip&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;127.0.0.1&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;22&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;remote_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;6000&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;[web]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_ip&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;127.0.0.1&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8080&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;custom_domains&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Static_IP&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;至此在公司内网通过 Static_IP 来访问两台打包机的需求就已经满足了。&lt;/p&gt;
+
+&lt;h3 id=&quot;2-外网访问&quot;&gt;2. 外网访问&lt;/h3&gt;
+
+&lt;h4 id=&quot;具体场景-1&quot;&gt;具体场景&lt;/h4&gt;
+
+&lt;p&gt;在非公司内网的环境下，想使用公司的 Jenkins 机器，但公司并没有对我们有固定 IP 的 Jenkins 机器的 IP 做 VPN 授权（授权的话同样需要申报），这个时候就可以利用 FRP 做内网穿透了，前提是你得有一台有公网 IP 的机器（其实上面的案例里有固定 IP 的机器就是扮演着这样的角色），这里假设公网 IP 为 &lt;code class=&quot;highlighter-rouge&quot;&gt;Public_IP&lt;/code&gt;。另外，最好手上有能用的域名，没有的话通过手动改 &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; 也是可以解决的。&lt;/p&gt;
+
+&lt;h4 id=&quot;实施方案-1&quot;&gt;实施方案&lt;/h4&gt;
+
+&lt;p&gt;第一步，公司内有固定 IP 的机器和有公网 IP 的机器的 FRP 配置。&lt;/p&gt;
+
+&lt;p&gt;有公网 IP 的机器作为 FRP Server，公司内有固定 IP 的机器作为 FRP Client，最终以 &lt;code class=&quot;highlighter-rouge&quot;&gt;http://jks0.your.domain:8080&lt;/code&gt; 来访问公司内有固定 IP 的机器、以 &lt;code class=&quot;highlighter-rouge&quot;&gt;http://jks1.your.domain:8080&lt;/code&gt; 来访问公司内没有固定 IP 的机器（需要配置域名或者 hosts，将 jks0.your.domain 和 jks1.your.domain 指向 Public_IP）。另外需要以 &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh user@Public_IP -p 6000&lt;/code&gt; 登录公司内有固定 IP 的机器、以 &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh user@Public_IP -p 6001&lt;/code&gt; 登录公司内没有固定 IP 的机器，具体配置如下：&lt;/p&gt;
+
+&lt;p&gt;Server - frps.ini:&lt;/p&gt;
+
+&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;[common]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;bind_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;7000&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;vhost_http_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8080&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Client - frpc.ini:&lt;/p&gt;
+
+&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;[common]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;server_addr&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Public_IP&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;server_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;7000&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;[ssh0]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;tcp&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_ip&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;127.0.0.1&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;22&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;remote_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;6000&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;[ssh1]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;tcp&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_ip&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;127.0.0.1&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;6000&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;remote_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;6001&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;[web0]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_ip&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;127.0.0.1&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8080&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;custom_domains&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;jks0.your.domain&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;[web1]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_ip&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Static_IP&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;local_port&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8081&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;custom_domains&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;jks1.your.domain&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;到这里这两台机器就算是配置完了，但是通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;http://jks1.your.domain:8080&lt;/code&gt; 却打不开公司内没有固定 IP 的机器的 Jenkins 服务，其实是 &lt;code class=&quot;highlighter-rouge&quot;&gt;1. 内网访问&lt;/code&gt; 的 &lt;code class=&quot;highlighter-rouge&quot;&gt;frpc.ini&lt;/code&gt; 配置里少了一项。&lt;/p&gt;
+
+&lt;p&gt;第二步，修改公司内没有固定 IP 机器的 &lt;code class=&quot;highlighter-rouge&quot;&gt;frpc.ini&lt;/code&gt;，将 &lt;code class=&quot;highlighter-rouge&quot;&gt;jks1.your.domain&lt;/code&gt; 添加到  &lt;code class=&quot;highlighter-rouge&quot;&gt;custom_domains&lt;/code&gt;。&lt;/p&gt;
+
+&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;py&quot;&gt;custom_domains&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Static_IP&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;改为&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;custom_domains&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Static_IP,jks1.your.domain&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;至此，所有的服务都已部署完毕。&lt;/p&gt;
+
+&lt;p&gt;至于 https 可以参考官方的 &lt;a href=&quot;https://github.com/fatedier/frp/blob/master/conf/frps_full.ini&quot;&gt;frps_full.ini&lt;/a&gt; 和 &lt;a href=&quot;https://github.com/fatedier/frp/blob/master/conf/frpc_full.ini&quot;&gt;frpc_full.ini&lt;/a&gt; 这里就不赘述了。&lt;/p&gt;
+
+&lt;h3 id=&quot;end&quot;&gt;&lt;em&gt;End~!&lt;/em&gt;&lt;/h3&gt;
+</description>
+        <pubDate>Thu, 05 Sep 2019 10:00:00 +0800</pubDate>
+        <link>https://dwarven.github.io/frp/proxy/reverse-proxy/nat/firewall/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/2019/09/05/FRP.html</link>
+        <guid isPermaLink="true">https://dwarven.github.io/frp/proxy/reverse-proxy/nat/firewall/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/2019/09/05/FRP.html</guid>
+        
+        <category>frp</category>
+        
+        <category>proxy</category>
+        
+        <category>reverse-proxy</category>
+        
+        <category>nat</category>
+        
+        <category>firewall</category>
+        
+        <category>反向代理</category>
+        
+        <category>内网穿透</category>
+        
+        
+        <category>frp</category>
+        
+        <category>proxy</category>
+        
+        <category>reverse-proxy</category>
+        
+        <category>nat</category>
+        
+        <category>firewall</category>
+        
+        <category>反向代理</category>
+        
+        <category>内网穿透</category>
+        
+      </item>
     
       <item>
         <title>利用 Jenkins 实现 Xcode 自动打包</title>
@@ -1883,12 +2023,12 @@ Entitlements &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;424 bytes&lt;span cla
 &lt;p&gt;我们原来发送了一条用户不可见的&lt;code class=&quot;highlighter-rouge&quot;&gt;Remote Notification&lt;/code&gt;给app来做一些处理，结构如下：&lt;/p&gt;
 
 &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;event&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -1896,16 +2036,16 @@ Entitlements &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;424 bytes&lt;span cla
 &lt;p&gt;就是这条数据，&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS9&lt;/code&gt;的app可以接收的到，&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;不行。我立即试了一下用户可见的&lt;code class=&quot;highlighter-rouge&quot;&gt;Remote Notification&lt;/code&gt;，发现&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS10&lt;/code&gt;是可以接收的到的。内容如下：&lt;/p&gt;
 
 &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;aps&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;aps&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;alert&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;This is some fancy message.&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;alert&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;This is some fancy message.&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;event&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -1946,16 +2086,16 @@ Entitlements &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;424 bytes&lt;span cla
 最后我们选择后台运行也可以唤醒app的key&lt;code class=&quot;highlighter-rouge&quot;&gt;content-available&lt;/code&gt;（具体&lt;code class=&quot;highlighter-rouge&quot;&gt;content-available&lt;/code&gt;怎么用请自行Google）。内容如下：&lt;/p&gt;
 
 &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;aps&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;aps&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;content-available&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;content-available&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;event&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;event_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-		&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;key3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+		&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;key3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;value3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 	&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -1972,71 +2112,6 @@ Entitlements &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;424 bytes&lt;span cla
         
         
         <category>iOS</category>
-        
-      </item>
-    
-      <item>
-        <title>苹果开发者证书都显示“此证书的签发者无效”</title>
-        <description>&lt;h4 id=&quot;遇到的问题&quot;&gt;遇到的问题&lt;/h4&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;iOS开发证书都显示“此证书的签发者无效”，更新WWDR Certificate证书后还是显示无效&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;原因分析&quot;&gt;原因分析&lt;/h4&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;首先iOS开发证书显示“此证书的签发者无效”，是由于WWDR Certificate证书过期导致的，需要更新WWDR Certificate证书！&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;解决方案&quot;&gt;解决方案&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;下载最新版的证书 &lt;a href=&quot;https://developer.apple.com/certificationauthority/AppleWWDRCA.cer&quot;&gt;WWDR Certificate&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;双击打开安装&lt;/p&gt;
-
-    &lt;blockquote&gt;
-      &lt;p&gt;安装后重新查看 iOS 开发证书，依然显示“此证书的签发者无效”，什么原因呢？因为还没有删除过期的 WWDR Certificate 证书&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;删除过期 WWDR Certificate 证书&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;打开钥匙串，显示过期证书（默认是隐藏），点击 显示-&amp;gt;显示已过期的证书&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Xcode-WWDR-Certificate-Invalid/0.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;在所有项目与系统中删除过期的WWDR Certificate证书&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://dwarven.github.io/assets/posts/Xcode-WWDR-Certificate-Invalid/1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;删完之后，再看原来的 iOS 开发证书，就变成有效的了～&lt;/p&gt;
-</description>
-        <pubDate>Fri, 19 Feb 2016 10:00:00 +0800</pubDate>
-        <link>https://dwarven.github.io/xcode/ios/wwdr/certificate/invalid/2016/02/19/Xcode-WWDR-Certificate-Invalid.html</link>
-        <guid isPermaLink="true">https://dwarven.github.io/xcode/ios/wwdr/certificate/invalid/2016/02/19/Xcode-WWDR-Certificate-Invalid.html</guid>
-        
-        <category>Xcode</category>
-        
-        <category>iOS</category>
-        
-        <category>WWDR</category>
-        
-        <category>Certificate</category>
-        
-        <category>Invalid</category>
-        
-        
-        <category>Xcode</category>
-        
-        <category>iOS</category>
-        
-        <category>WWDR</category>
-        
-        <category>Certificate</category>
-        
-        <category>Invalid</category>
         
       </item>
     

@@ -43,7 +43,7 @@
 
   <!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>iOS10 APNs 新变化 | Dwarven</title>
-<meta name="generator" content="Jekyll v3.8.5" />
+<meta name="generator" content="Jekyll v3.8.6" />
 <meta property="og:title" content="iOS10 APNs 新变化" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="背景" />
@@ -247,12 +247,12 @@
 <p>我们原来发送了一条用户不可见的<code class="highlighter-rouge">Remote Notification</code>给app来做一些处理，结构如下：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-	</span><span class="s2">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"message"</span><span class="p">:</span><span class="w">
+	</span><span class="nl">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"message"</span><span class="p">:</span><span class="w">
 	</span><span class="p">{</span><span class="w">
-		</span><span class="s2">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
-		</span><span class="s2">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
-		</span><span class="s2">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
 	</span><span class="p">},</span><span class="w">
 	</span><span class="err">...</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -260,16 +260,16 @@
 <p>就是这条数据，<code class="highlighter-rouge">iOS9</code>的app可以接收的到，<code class="highlighter-rouge">iOS10</code>不行。我立即试了一下用户可见的<code class="highlighter-rouge">Remote Notification</code>，发现<code class="highlighter-rouge">iOS10</code>是可以接收的到的。内容如下：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-	</span><span class="s2">"aps"</span><span class="p">:</span><span class="w">
+	</span><span class="nl">"aps"</span><span class="p">:</span><span class="w">
 	</span><span class="p">{</span><span class="w">
-		</span><span class="s2">"alert"</span><span class="p">:</span><span class="s2">"This is some fancy message."</span><span class="w">
+		</span><span class="nl">"alert"</span><span class="p">:</span><span class="s2">"This is some fancy message."</span><span class="w">
 	</span><span class="p">},</span><span class="w">
-	</span><span class="s2">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"message"</span><span class="p">:</span><span class="w">
+	</span><span class="nl">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"message"</span><span class="p">:</span><span class="w">
 	</span><span class="p">{</span><span class="w">
-		</span><span class="s2">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
-		</span><span class="s2">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
-		</span><span class="s2">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
 	</span><span class="p">},</span><span class="w">
 	</span><span class="err">...</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -310,16 +310,16 @@
 最后我们选择后台运行也可以唤醒app的key<code class="highlighter-rouge">content-available</code>（具体<code class="highlighter-rouge">content-available</code>怎么用请自行Google）。内容如下：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-	</span><span class="s2">"aps"</span><span class="p">:</span><span class="w">
+	</span><span class="nl">"aps"</span><span class="p">:</span><span class="w">
 	</span><span class="p">{</span><span class="w">
-		</span><span class="s2">"content-available"</span><span class="p">:</span><span class="s2">"1"</span><span class="w">
+		</span><span class="nl">"content-available"</span><span class="p">:</span><span class="s2">"1"</span><span class="w">
 	</span><span class="p">},</span><span class="w">
-	</span><span class="s2">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"message"</span><span class="p">:</span><span class="w">
+	</span><span class="nl">"event"</span><span class="p">:</span><span class="s2">"event_id"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"message"</span><span class="p">:</span><span class="w">
 	</span><span class="p">{</span><span class="w">
-		</span><span class="s2">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
-		</span><span class="s2">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
-		</span><span class="s2">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key1"</span><span class="p">:</span><span class="s2">"value1"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key2"</span><span class="p">:</span><span class="s2">"value2"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"key3"</span><span class="p">:</span><span class="s2">"value3"</span><span class="p">,</span><span class="w">
 	</span><span class="p">},</span><span class="w">
 	</span><span class="err">...</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -392,6 +392,15 @@
     
       <li>
         <h3>
+          <a href="/frp/proxy/reverse-proxy/nat/firewall/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/2019/09/05/FRP.html">
+            公司内的 FRP 应用
+            <small>05 Sep 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
           <a href="/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html">
             利用 Jenkins 实现 Xcode 自动打包
             <small>21 Jul 2019</small>
@@ -404,15 +413,6 @@
           <a href="/ios/enterprise/distribution/2019/07/07/iOS-%E4%BC%81%E4%B8%9A%E5%8F%91%E5%B8%83.html">
             iOS 企业发布
             <small>07 Jul 2019</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/ios/certificate/code%20signing/2019/06/06/%E7%BB%86%E8%AF%B4-iOS-%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D.html">
-            细说 iOS 代码签名
-            <small>06 Jun 2019</small>
           </a>
         </h3>
       </li>
