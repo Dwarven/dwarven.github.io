@@ -54,7 +54,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-07-21T10:00:00+08:00" />
 <script type="application/ld+json">
-{"description":"Jenkins 是什么?","@type":"BlogPosting","url":"https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html","headline":"利用 Jenkins 实现 Xcode 自动打包","dateModified":"2019-07-21T10:00:00+08:00","datePublished":"2019-07-21T10:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html"},"@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html"},"url":"https://dwarven.github.io/jenkins/xcode/archive/packaging/ios/enterprise/distribution/2019/07/21/Jenkins-Xcode-Auto-Packaging.html","headline":"利用 Jenkins 实现 Xcode 自动打包","dateModified":"2019-07-21T10:00:00+08:00","datePublished":"2019-07-21T10:00:00+08:00","description":"Jenkins 是什么?","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -655,7 +655,12 @@ xcodebuild <span class="nt">-workspace</span> <span class="k">${</span><span cla
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/Applications/Xcode.app/Contents/Applications/Application Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool <span class="nt">--validate-app</span> <span class="nt">-f</span> /Path/To/Your/IPA/xxx.ipa <span class="nt">-t</span> osx|ios|appletvos <span class="nt">-u</span> itunesconnectUserName <span class="nt">-p</span> itunesconnectPassword <span class="nt">--output-format</span> xml
 /Applications/Xcode.app/Contents/Applications/Application Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool <span class="nt">--upload-app</span> <span class="nt">-f</span> /Path/To/Your/IPA/xxx.ipa <span class="nt">-t</span> osx|ios|appletvos <span class="nt">-u</span> itunesconnectUserName <span class="nt">-p</span> itunesconnectPassword <span class="nt">--output-format</span> xml
+</code></pre></div></div>
 
+<p><a href="https://developer.apple.com/documentation/xcode_release_notes/xcode_11_release_notes">Xcode 11 移除了 Application Loader</a>，可直接使用 <code class="highlighter-rouge">xcrun altool</code></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xcrun altool <span class="nt">--validate-app</span> <span class="nt">-f</span> /Path/To/Your/IPA/xxx.ipa <span class="nt">-t</span> osx|ios|appletvos <span class="nt">-u</span> itunesconnectUserName <span class="nt">-p</span> itunesconnectPassword <span class="nt">--output-format</span> xml
+xcrun altool <span class="nt">--upload-app</span> <span class="nt">-f</span> /Path/To/Your/IPA/xxx.ipa <span class="nt">-t</span> osx|ios|appletvos <span class="nt">-u</span> itunesconnectUserName <span class="nt">-p</span> itunesconnectPassword <span class="nt">--output-format</span> xml
 </code></pre></div></div>
 
 <h4 id="任务构建后操作">任务构建后操作</h4>
